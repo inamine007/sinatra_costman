@@ -1,4 +1,4 @@
-<%= @name %>
+<%= @user['name'] %>
 <form action='/test' method='post'>
   <%= Rack::Csrf.tag(env) %>
   <label for="name">名前</label>  

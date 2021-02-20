@@ -3,6 +3,7 @@ require 'sinatra/reloader'
 require 'pry'
 require 'rack/csrf'
 require './helpers/helpers.rb'
+require 'pg'
 
 configure do
   enable :sessions
@@ -11,7 +12,16 @@ configure do
   helpers Escape  
 end
 
-get '/' do  
+
+client = PG::connect(
+  :host => ENV.fetch("HOST", "localhost"),
+  :user => ENV.fetch("USER"),
+  :password => ENV.fetch("PASSWORD"),
+  :dbname => ENV.fetch("DBNAME")
+)
+
+get '/' do
+  @user = client.exec_params("SELECT * FROM test").to_a.first
   erb :index
 end
 
