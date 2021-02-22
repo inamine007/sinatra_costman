@@ -1,0 +1,8 @@
+<% if form.failed? %>
+  <p>無効な入力があります。</p>
+  <ul>
+    <% form.messages(args).each do |message| %>
+      <li><%= message %></li> 
+    <% end %>
+  </ul>
+<% end %>

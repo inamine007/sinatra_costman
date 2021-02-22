@@ -1,0 +1,49 @@
+<%= partial(:form_invalid, :locals => {:args => 'ingredient_new'}) %>
+<form action="/ingredients/create" method="post">
+  <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">
+  <div>
+    <label for="name">食材名: </label>
+    <input type="text" name="name" id="name">
+  </div>
+  <div>
+    <label for="trader">仕入れ先: </label>
+    <input type="text" name="trader" id="trader">
+  </div>
+  <div>
+    <label for="unit">仕入れ単位: </label>
+    <select name="unit" id="unit">
+      <% @s_unit.each do |unit| %>
+        <option value="<%= unit[:value] %>"><%= unit[:key] %></option>
+      <% end %>
+    </select>
+  </div>
+  <div>
+    <label for="cost">仕入れ原価: </label>
+    <input type="number" name="cost" id="cost">
+  </div>
+  <div>
+    <label for="budomari">歩留まり: </label>
+    <select name="budomari" id="budomari">
+      <% @s_budomari.each do |budomari| %>
+        <option value="<%= budomari %>"><%= budomari %></option>          
+      <% end %>
+    </select>
+  </div>
+  <div>
+    <label for="unit_used">使用単位: </label>
+    <select name="unit_used" id="unit_used">
+      <% @s_unit.each do |unit| %>
+        <option value="<%= unit[:value] %>"><%= unit[:key] %></option>
+      <% end %>
+    </select>
+  </div>
+  <div>
+    <label for="converted_number">換算数: </label>
+    <select name="budomari" id="budomari">
+      <% @s_converted_number.each do |c_number| %>
+        <option value="<%= c_number %>"><%= c_number %></option>          
+      <% end %>
+    </select>
+  </div>
+  <input type="submit" value="登録">
+</form>

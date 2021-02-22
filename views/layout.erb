@@ -12,8 +12,9 @@
     <nav>
       <ul>
         <% if session[:user] %>
-          <li><a href="#">食材登録</a></li>
-          <li><a href="#">食材一覧</a></li>
+          <li>ようこそ!<%= @name %>さん</li>
+          <li><a href="/ingredients/new">食材登録</a></li>
+          <li><a href="/ingredients">食材一覧</a></li>
           <li><a href="#">レシピ登録</a></li>
           <li><a href="#">レシピ一覧</a></li>
           <li>            
@@ -22,7 +23,7 @@
               <input type="hidden" name="_method" value="DELETE">
               <input type="submit" value="サインアウト">
             </form>
-          </li>
+          </li>          
           <li>            
             <form action="/user" method="post">
               <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">             

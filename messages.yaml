@@ -1,0 +1,35 @@
+signup:
+  name:
+    present: '名前は必須項目です。'
+    length: '名前は25文字以内で入力してください。'
+  email:
+    present: 'メールアドレスは必須項目です。'
+    DEFAULT: 'メールアドレスに誤りがあります。'    
+  password:
+    present: 'パスワードは必須項目です。'    
+    length: 'パスワードは4文字から8文字で入力してください。'
+signin:
+  email:
+    present: 'メールアドレスは必須項目です。'
+    DEFAULT: 'メールアドレスに誤りがあります。'    
+  password:
+    present: 'パスワードは必須項目です。'    
+    length: 'パスワードは4文字から8文字で入力してください。'
+ingredient_new:
+  name:
+    present: '食材名は必須項目です。'
+    length: '食材名は50文字以内で入力してください。'
+  trader:
+    present: '仕入れ先は必須項目です。'
+    length: '仕入れ先は50文字以内で入力してください。'    
+  cost:
+    present: 'パスワードは必須項目です。'    
+ingredient_edit:
+  name:
+    present: '食材名は必須項目です。'
+    length: '食材名は50文字以内で入力してください。'
+  trader:
+    present: '仕入れ先は必須項目です。'
+    length: '仕入れ先は50文字以内で入力してください。'    
+  cost:
+    present: 'パスワードは必須項目です。'  
