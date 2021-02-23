@@ -1,3 +1,31 @@
 <div>
-  <%= @ingredient['name'] %>
+  <div>食材名: </div>
+  <div><%= @ingredient['name'] %></div>
+  <br>
+  <div>仕入れ先: </div>
+  <div><%= @ingredient['trader'] %></div>
+  <br>
+  <div>仕入れ単位: </div>
+  <div><%= @s_unit.key(@ingredient['unit']) %></div>
+  <br>
+  <div>仕入れ原価: </div>
+  <div><%= @ingredient['cost'] %></div>
+  <br>
+  <div>歩留まり: </div>
+  <div><%= @ingredient['budomari'] %></div>
+  <br>
+  <div>使用単位: </div>
+  <div><%= @s_unit.key(@ingredient['unit_used']) %></div>
+  <br>
+  <div>換算数: </div>
+  <div><%= @ingredient['converted_number'] %></div>
+  <br>
+  <div>使用原価: </div>
+  <div><%= @ingredient['cost_used'] %></div>
+  <button><a href="/ingredients/<%= @ingredient['id'] %>/edit">編集</a></button>
+  <form action="/ingredients/<%= @ingredient['id'] %>" method="post">
+    <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">             
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="submit" id="delete_confirm" value="削除">
+  </form>
 </div>

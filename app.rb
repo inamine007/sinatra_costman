@@ -28,26 +28,18 @@ before do
   unless request.path == '/' || request.path == '/signin' || request.path == '/signup' || session[:user]
     redirect '/signin'
   end
-  @name = session[:user]['name'] if session[:user]
-  @s_unit = [
-    {'key': 'Kg', 'value': '0'}, 
-    {'key': 'g', 'value': '1'}, 
-    {'key': 'L', 'value': '2'}, 
-    {'key': 'ml', 'value': '3'}, 
-    {'key': '個', 'value': '4'}, 
-    {'key': '本', 'value': '5'}, 
-    {'key': '袋', 'value': '6'}
-  ]
+  @name = session[:user]['name'] if session[:user]  
+  @s_unit= {'Kg': '0','g': '1', 'L': '2','ml': '3', '個': '4', '本': '5', '袋': '6'}
   @s_budomari = ['1', '0.9', '0.8', '0.7', '0.6', '0.5', '0.4', '0.3', '0.2', '0.1']
   @s_converted_number = ['1', '0.1', '0.01', '0.001']
 end
 
 get '/signup' do
-  csrf_token_generate
+  csrf_token_generate  
   return erb :signup
 end
 
-post '/signup' do
+post '/signup' do  
   return redirect '/signup' unless params[:csrf_token] == session[:csrf_token]
   form do
     field :name, :present => true, :length => 1..25
@@ -74,7 +66,7 @@ get "/signin" do
   return erb :signin
 end
 
-post "/signin" do
+post "/signin" do  
   return redirect '/signin' unless params[:csrf_token] == session[:csrf_token]
   form do
     field :email, :present => true, :email => true, :length => 1..35
@@ -163,7 +155,13 @@ get '/ingredients/:id/edit' do
   return erb :ingredient_edit
 end
 
-put "/ingredients/:id/update" do
+delete "/ingredients/:id" do    
+  ingredient_id = params[:id]    
+  client.exec_params("DELETE FROM ingredients WHERE id = #{ingredient_id}")
+  return redirect "/ingredients" 
+end
+
+put "/ingredients/:id" do
   return redirect '/ingredient_new' unless params[:csrf_token] == session[:csrf_token]
   form do
     field :name, :present => true, :length => 1..50
@@ -182,15 +180,14 @@ put "/ingredients/:id/update" do
     budomari = params[:budomari]
     unit_used = params[:unit_used]
     converted_number = params[:converted_number]  
-    cost_used = converted_number.to_i * cost.to_i / budomari.to_i
+    cost_used = converted_number.to_i * cost.to_i / budomari.to_i    
     client.exec_params(
       "UPDATE ingredients
       SET name = $1, trader = $2, unit = $3, cost = $4, budomari = $5, unit_used = $6, converted_number = $7, cost_used = $8
       WHERE id = #{ingredient_id}",
       [name, trader, unit, cost, budomari, unit_used, converted_number, cost_used]
     )
-
     return redirect "/ingredients/#{ingredient_id}"
-  end
+  end  
 end
 

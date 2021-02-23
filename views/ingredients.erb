@@ -1,5 +1,12 @@
 <div>
   <% @ingredients.each do |ingredient| %>
-    <div><%= ingredient['name'] %></div>
+    <div><%= ingredient['trader'] %></div>
+    <div><a href="/ingredients/<%= ingredient['id'] %>"><%= ingredient['name'] %></a></div>
+    <button><a href="/ingredients/<%= ingredient['id'] %>/edit">編集</a></button>
+    <form action="/ingredients/<%= ingredient['id'] %>" method="post">
+      <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">             
+      <input type="hidden" name="_method" value="DELETE">
+      <input type="submit" id="delete_confirm" value="削除">
+    </form>
   <% end %>
 </div>
