@@ -1,0 +1,130 @@
+<form action="/recipes" method="post" enctype="multipart/form-data">
+  <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">
+  <div>
+    <label for="name">料理名: </label>
+    <input type="text" name="name" id="name">
+  </div>  
+  <div>
+    <label for="price">値段: </label>
+    <input type="number" name="price" id="price">
+  </div>
+  <div>
+    <label for="img">画像: </label>
+    <input type="file" name="img">
+  </div>
+  <div>
+    <label for="description">作り方: </label>
+    <textarea name="description" id="description"></textarea>
+  </div>
+  <div>食材</div>
+  <div id="append">
+    <div id="i_form" style="display: none;">
+      <label class="l_trader">仕入れ先: </label>
+      <select class="s_trader" onChange="getName(this.value, this.id)">
+        <option value="" selected disabled>選択してください</option>
+        <% @s_traders.each do |key| %>
+          <option value="<%= key['trader'] %>"><%= key['trader'] %></option>
+        <% end %>
+      </select>
+      <label class="l_name">食材名: </label>
+      <select class="s_name" disabled onChange="getUnit(this.value, this.id)"></select>
+      <label class="l_amount">使用量: </label>
+      <input type="number" class="t_amount" onChange="getCost(this.id)">      
+      <span class="sp_unit">単位</span>
+      <label>原価: </label>
+      <input type="text" class="t_cost" readonly>
+      <span>円</span>
+      <input type="button" value="−" class="r_btn" onClick="removeInput(this.id)">
+    </div>
+    <div id="i_form0">
+      <label for="ingredient_trader_0" class="l_trader">仕入れ先: </label>
+      <select id="ingredient_trader_0" class="s_trader" onChange="getName(this.value, this.id)">
+        <option value="" selected disabled>選択してください</option>
+        <% @s_traders.each do |key| %>
+          <option value="<%= key['trader'] %>"><%= key['trader'] %></option>
+        <% end %>
+      </select>
+      <label for="ingredient_name_0" class="l_name">食材名: </label>
+      <select name="ingredient_id_0" id="ingredient_name_0" class="s_name" disabled onChange="getUnit(this.value, this.id)"></select>
+      <label for="ingredient_amount_0" class="l_amount">使用量: </label>
+      <input type="number" name="ingredient_amount_0" id="ingredient_amount_0" class="t_amount" onChange="getCost(this.id)">
+      <span class="sp_unit_0" id="ingredient_unit_0">単位</span>
+      <label>原価: </label>
+      <input type="number" name="ingredient_cost_used_0" id="ingredient_cost_used_0" class="t_cost" readonly>
+      <span>円</span>
+      <input type="button" value="−" class="r_btn" id="remove_btn_0">
+    </div>
+  </div>
+  <input type="button" value="＋" onClick="addInput()">
+  <input type="submit" value="登録">
+</form>
+
+<script>
+  function getName(trader, index) {    
+    var idx = index.split('_');
+    $('#ingredient_name_' + idx[2]).html('');
+    $('#ingredient_name_' + idx[2]).prop('disabled', false);
+    $.ajax({
+      async: false,
+      url: '/sp_getingredient_name/' + trader,
+      type: "POST",
+      dataType: "json",      
+    }).done(function(data) {        
+        $('#ingredient_name_' + idx[2]).append($('<option>').html('選択してください').val('').attr({disabled: true, selected: true}));
+        for(let i=0; i < data.length; i++) {
+          $('#ingredient_name_' + idx[2]).append($('<option>').html(data[i].name).val(data[i].id));
+        }
+    });
+  }
+
+  function getUnit(id, index) {
+    var idx = index.split('_');    
+    $.ajax({
+      async: false,
+      url: '/sp_getingredient_unit/' + id,
+      type: "POST",
+      dataType: "json",      
+    }).done(function(data) {
+      var unit = <%= @s_unit.to_json %>
+      var value = [];
+      for(let i=0; i < data.length; i++) {
+        value = Object.keys(unit).reduce(function(r, k) { return unit[k] == data[i].unit_used ? k : r }, null);        
+        $('#ingredient_unit_' + idx[2]).html(value);
+      }
+    });
+  }
+
+  function getCost(index) {
+    var idx = index.split('_');    
+    var ingredient_id = $('#ingredient_name_' + idx[2]).val();
+    $.ajax({
+      async: false,
+      url: '/sp_getingredient_cost/' + ingredient_id,
+      type: "POST",
+      dataType: "json",      
+    }).done(function(data) {      
+      var value = Number($('#ingredient_amount_' + idx[2]).val()) * Number(data[0].cost_used);      
+      $('#ingredient_cost_used_' + idx[2]).html(value).val(value);
+    });
+  }
+
+  var i = 0;
+  function addInput() {
+    i++;
+    $('#i_form').clone(true).appendTo('#append').attr('id', 'i_form' + i).css('display', 'block')
+    .find('.l_trader').attr('for', 'ingredient_trader_' + i).end()
+    .find('.s_trader').attr('id', 'ingredient_trader_' + i).end()
+    .find('.l_name').attr('for', 'ingredient_name_' + i).end()
+    .find('.s_name').attr({name: 'ingredient_id_' + i, id: 'ingredient_name_' + i, disabled: true}).html('').end()
+    .find('.r_btn').attr('id', 'remove_btn_' + i).end()
+    .find('.l_amount').attr('for', 'ingredient_amount_' + i).end()
+    .find('.t_amount').attr({name: 'ingredient_amount_' + i, id: 'ingredient_amount_' + i}).end()
+    .find('.sp_unit').attr('id', 'ingredient_unit_' + i).end()
+    .find('.t_cost').attr({name: 'ingredient_cost_used_' + i, id: 'ingredient_cost_used_' + i});
+  }
+
+  function removeInput(index) {
+    var idx = index.split('_');
+    $('#i_form' + idx[2]).remove();
+  }
+</script>

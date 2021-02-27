@@ -12,5 +12,4 @@ gem "pry"
 gem "pg"
 # gem "digest"
 gem "bcrypt"
-gem 'sinatra-formkeeper'
 gem 'sinatra-partial'

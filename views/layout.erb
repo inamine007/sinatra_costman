@@ -17,8 +17,8 @@
           <li>ようこそ!<%= @name %>さん</li>
           <li><a href="/ingredients/new">食材登録</a></li>
           <li><a href="/ingredients">食材一覧</a></li>
-          <li><a href="#">レシピ登録</a></li>
-          <li><a href="#">レシピ一覧</a></li>
+          <li><a href="/recipes/new">レシピ登録</a></li>
+          <li><a href="/recipes">レシピ一覧</a></li>
           <li>            
             <form action="/signout" method="post">
               <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">             
