@@ -168,7 +168,7 @@ get '/ingredients/:id' do
   ingredient_id = params[:id]
   user_id = session[:user]['id']
   # 食材のidとユーザーのidから対応する食材をDBから取得
-  @ingredient = client.exec_params("SELECT * FROM ingredients WHERE id = #{ingredient_id} AND user_id = #{user_id}").to_a.first
+  @ingredient = client.exec_params("SELECT *, to_char(created_at, 'yyyy/mm/dd') as created FROM ingredients WHERE id = #{ingredient_id} AND user_id = #{user_id}").to_a.first
   # 食材が取得できない場合、食材一覧ページに遷移
   if @ingredient.nil?
     return redirect '/ingredients'
@@ -282,7 +282,7 @@ get '/recipes/:id' do
   # URLからレシピidを取得
   recipe_id = params[:id]
   # レシピのidとユーザーのidから対応するレシピをDBから取得
-  @recipe = client.exec_params("SELECT * FROM recipes WHERE id = #{recipe_id} AND user_id = #{user_id}").to_a.first
+  @recipe = client.exec_params("SELECT *, to_char(created_at, 'yyyy/mm/dd') as created FROM recipes WHERE id = #{recipe_id} AND user_id = #{user_id}").to_a.first
   # レシピが取得できない場合、レシピ一覧ページに遷移
   if @recipe.nil?
     return redirect '/recipes'
