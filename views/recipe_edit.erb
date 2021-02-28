@@ -3,15 +3,16 @@
   <input type="hidden" name="_method" value="PUT">
   <div>
     <label for="name">料理名: </label>
-    <input type="text" name="name" id="name" value="<%= @recipe['name'] %>">
+    <input type="text" name="name" id="name" value="<%= @recipe['name'] %>" required>
   </div>  
   <div>
     <label for="price">値段: </label>
-    <input type="number" name="price" id="price" value="<%= @recipe['price'] %>">
+    <input type="number" name="price" id="price" value="<%= @recipe['price'] %>" required>
   </div>
   <div>
     <label for="img">画像: </label>
-    <input type="file" name="img">
+    <input type="hidden" name="img" value="<%= @recipe['image'] %>">
+    <input type="file" name="update_img">
   </div>
   <div>
     <label for="description">作り方: </label>
@@ -30,7 +31,7 @@
       <label class="l_name">食材名: </label>
       <select class="s_name" disabled onChange="getUnit(this.value, this.id)"></select>
       <label class="l_amount">使用量: </label>
-      <input type="number" class="t_amount" onChange="getCost(this.id)">      
+      <input type="number" class="t_amount" onChange="getCost(this.id)" step="0.1">      
       <span class="sp_unit">単位</span>
       <label>原価: </label>
       <input type="text" class="t_cost" readonly>
@@ -62,7 +63,7 @@
           <% end %>          
         </select>
         <label for="ingredient_amount_<%= i %>" class="l_amount">使用量: </label>
-        <input type="number" name="ingredient_amount_<%= i %>" id="ingredient_amount_<%= i %>" value="<%= ingredient['amount'] %>" class="t_amount" onChange="getCost(this.id)">
+        <input type="number" name="ingredient_amount_<%= i %>" id="ingredient_amount_<%= i %>" value="<%= ingredient['amount'] %>" class="t_amount" onChange="getCost(this.id)" step="0.1">
         <span class="sp_unit_<%= i %>" id="ingredient_unit_<%= i %>">
           <% @s_unit.each do |key, value| %>
             <% if value == ingredient['unit_used'] %>
@@ -71,7 +72,7 @@
           <% end %>
         </span>
         <label>原価: </label>
-        <input type="number" name="ingredient_cost_used_<%= i %>" id="ingredient_cost_used_<%= i %>" value="<%= ingredient['cost_used'] %>" class="t_cost" readonly>
+        <input type="number" name="ingredient_cost_used_<%= i %>" id="ingredient_cost_used_<%= i %>" value="<%= ingredient['cost_used'] %>" class="t_cost" readonly step="0.1">
         <span>円</span>
         <input type="button" value="−" class="r_btn" id="remove_btn_<%= i %>">
       </div>
@@ -90,6 +91,7 @@
       async: false,
       url: '/sp_getingredient_name/' + trader,
       type: "POST",
+      data: {csrf_token: "<%= @csrf_token %>"},
       dataType: "json",      
     }).done(function(data) {        
         $('#ingredient_name_' + idx[2]).append($('<option>').html('選択してください').val('').attr({disabled: true, selected: true}));
@@ -105,6 +107,7 @@
       async: false,
       url: '/sp_getingredient_unit/' + id,
       type: "POST",
+      data: {csrf_token: "<%= @csrf_token %>"},
       dataType: "json",      
     }).done(function(data) {
       var unit = <%= @s_unit.to_json %>
@@ -123,6 +126,7 @@
       async: false,
       url: '/sp_getingredient_cost/' + ingredient_id,
       type: "POST",
+      data: {csrf_token: "<%= @csrf_token %>"},
       dataType: "json",      
     }).done(function(data) {      
       var value = Number($('#ingredient_amount_' + idx[2]).val()) * Number(data[0].cost_used);      

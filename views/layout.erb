@@ -40,6 +40,14 @@
       </ul>
     </nav>
   </header>
+  <% if @message %>
+    <div><%= @message[:message] %><div>
+  <% end %>
   <%= yield %>
 </body>
+<script>
+  function deleteConfirm() {
+    return delete_confirm();
+  }
+</script>
 </html>

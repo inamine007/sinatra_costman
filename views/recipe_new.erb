@@ -1,12 +1,12 @@
-<form action="/recipes" method="post" enctype="multipart/form-data">
+<form action="/recipes" method="post" enctype="multipart/form-data" id="r_form">
   <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">
   <div>
     <label for="name">料理名: </label>
-    <input type="text" name="name" id="name">
+    <input type="text" name="name" id="name" required>
   </div>  
   <div>
     <label for="price">値段: </label>
-    <input type="number" name="price" id="price">
+    <input type="number" name="price" id="price" required>
   </div>
   <div>
     <label for="img">画像: </label>
@@ -29,7 +29,7 @@
       <label class="l_name">食材名: </label>
       <select class="s_name" disabled onChange="getUnit(this.value, this.id)"></select>
       <label class="l_amount">使用量: </label>
-      <input type="number" class="t_amount" onChange="getCost(this.id)">      
+      <input type="number" class="t_amount" onChange="getCost(this.id)" step="0.1">      
       <span class="sp_unit">単位</span>
       <label>原価: </label>
       <input type="text" class="t_cost" readonly>
@@ -47,16 +47,16 @@
       <label for="ingredient_name_0" class="l_name">食材名: </label>
       <select name="ingredient_id_0" id="ingredient_name_0" class="s_name" disabled onChange="getUnit(this.value, this.id)"></select>
       <label for="ingredient_amount_0" class="l_amount">使用量: </label>
-      <input type="number" name="ingredient_amount_0" id="ingredient_amount_0" class="t_amount" onChange="getCost(this.id)">
+      <input type="number" name="ingredient_amount_0" id="ingredient_amount_0" class="t_amount" onChange="getCost(this.id)" step="0.1">
       <span class="sp_unit_0" id="ingredient_unit_0">単位</span>
       <label>原価: </label>
-      <input type="number" name="ingredient_cost_used_0" id="ingredient_cost_used_0" class="t_cost" readonly>
+      <input type="number" name="ingredient_cost_used_0" id="ingredient_cost_used_0" class="t_cost" readonly step="0.1">
       <span>円</span>
       <input type="button" value="−" class="r_btn" id="remove_btn_0">
     </div>
   </div>
   <input type="button" value="＋" onClick="addInput()">
-  <input type="submit" value="登録">
+  <input type="submit" value="登録" onClick="return checkForm()">
 </form>
 
 <script>
@@ -68,6 +68,7 @@
       async: false,
       url: '/sp_getingredient_name/' + trader,
       type: "POST",
+      data: {csrf_token: "<%= @csrf_token %>"},
       dataType: "json",      
     }).done(function(data) {        
         $('#ingredient_name_' + idx[2]).append($('<option>').html('選択してください').val('').attr({disabled: true, selected: true}));
@@ -83,6 +84,7 @@
       async: false,
       url: '/sp_getingredient_unit/' + id,
       type: "POST",
+      data: {csrf_token: "<%= @csrf_token %>"},
       dataType: "json",      
     }).done(function(data) {
       var unit = <%= @s_unit.to_json %>
@@ -101,6 +103,7 @@
       async: false,
       url: '/sp_getingredient_cost/' + ingredient_id,
       type: "POST",
+      data: {csrf_token: "<%= @csrf_token %>"},
       dataType: "json",      
     }).done(function(data) {      
       var value = Number($('#ingredient_amount_' + idx[2]).val()) * Number(data[0].cost_used);      
@@ -126,5 +129,28 @@
   function removeInput(index) {
     var idx = index.split('_');
     $('#i_form' + idx[2]).remove();
+  }
+
+  function checkForm() {
+    $('#r_form').submit(function() {
+      var differs = true;
+      var name_array = [];
+      $('select[id^=ingredient_name]').each(function(){        
+        if(!$(this).val()) {
+          alert('食材名は必須項目です');
+          differs =  false;
+          return false;
+        }else {
+          name_array.push($(this).val());
+        }
+      });
+      console.log(name_array);
+      var unique_array = new Set(name_array);
+      if(unique_array.size != $('select[id^=ingredient_name]').length) {
+        alert('同一の食材は選択できません');
+        differs = false;
+      }
+      return differs;      
+    });
   }
 </script>

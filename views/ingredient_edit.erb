@@ -3,17 +3,17 @@
   <input type="hidden" name="_method" value="PUT">
   <div>
     <label for="name">食材名: </label>
-    <input type="text" name="name" id="name" value="<%= @ingredient['name'] %>">
+    <input type="text" name="name" id="name" value="<%= @ingredient['name'] %>" required>
   </div>
   <div>
     <label for="trader">仕入れ先: </label>
-    <input type="text" name="trader" id="trader" value="<%= @ingredient['trader'] %>">
+    <input type="text" name="trader" id="trader" value="<%= @ingredient['trader'] %>" required>
   </div>
   <div>
     <label for="unit">仕入れ単位: </label>
     <select name="unit" id="unit">      
       <% @s_unit.each do |key, value| %>
-        <% if(value == @ingredient['unit']) %>
+        <% if value == @ingredient['unit'] %>
           <option value="<%= value %>" selected><%= key %></option>
         <% else %>
           <option value="<%= value %>"><%= key %></option>
@@ -23,13 +23,13 @@
   </div>
   <div>
     <label for="cost">仕入れ原価: </label>
-    <input type="number" name="cost" id="cost" value="<%= @ingredient['cost'] %>">
+    <input type="number" name="cost" id="cost" value="<%= @ingredient['cost'] %>" required>
   </div>
   <div>
     <label for="budomari">歩留まり: </label>
     <select name="budomari" id="budomari">
       <% @s_budomari.each do |budomari| %>
-          <% if(budomari == @ingredient['budomari']) %>
+          <% if budomari.to_f == @ingredient['budomari'].to_f %>
             <option value="<%= budomari %>" selected><%= budomari %></option>
           <% else %>
             <option value="<%= budomari %>"><%= budomari %></option>
@@ -41,7 +41,7 @@
     <label for="unit_used">使用単位: </label>
     <select name="unit_used" id="unit_used">      
       <% @s_unit.each do |key, value| %>
-        <% if(value == @ingredient['unit_used']) %>
+        <% if value == @ingredient['unit_used'] %>
           <option value="<%= value %>" selected><%= key %></option>
         <% else %>
           <option value="<%= value %>"><%= key %></option>
@@ -53,24 +53,12 @@
     <label for="converted_number">換算数: </label>
     <select name="converted_number" id="converted_number">
       <% @s_converted_number.each do |c_number| %>
-        <%if(c_number == @ingredient['converted_number']) %>
+        <% if c_number.to_f == @ingredient['converted_number'].to_f %>
           <option value="<%= c_number %>" selected><%= c_number %></option>
         <% else %>
           <option value="<%= c_number %>"><%= c_number %></option>
         <% end %>        
       <% end %>
-    </select>
-  </div>
-  <div>
-    <label for="budomari">歩留まり: </label>
-    <select name="budomari" id="budomari">
-      <% @s_budomari.each do |budomari| %>
-          <% if(budomari == @ingredient['budomari']) %>
-            <option value="<%= budomari %>" selected><%= budomari %></option>
-          <% else %>
-            <option value="<%= budomari %>"><%= budomari %></option>
-          <% end %>
-        <% end %>
     </select>
   </div>
   <input type="submit" value="更新">
