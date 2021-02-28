@@ -14,7 +14,7 @@
     <nav>
       <ul>
         <% if session[:user] %>
-          <li>ようこそ!<%= @name %>さん</li>
+          <li>ようこそ!<%= h(@name) %>さん</li>
           <li><a href="/ingredients/new">食材登録</a></li>
           <li><a href="/ingredients">食材一覧</a></li>
           <li><a href="/recipes/new">レシピ登録</a></li>
@@ -30,7 +30,7 @@
             <form action="/user" method="post">
               <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">             
               <input type="hidden" name="_method" value="DELETE">
-              <input type="submit" value="アカウント削除" id="delete_confirm">
+              <input type="submit" value="アカウント削除" onClick="return deleteConfirm()">
             </form>
           </li>
         <% else %>
@@ -41,7 +41,7 @@
     </nav>
   </header>
   <% if @message %>
-    <div><%= @message[:message] %><div>
+    <div><%= h(@message[:message]) %><div>
   <% end %>
   <%= yield %>
 </body>

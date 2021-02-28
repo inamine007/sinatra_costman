@@ -3,11 +3,11 @@
   <input type="hidden" name="_method" value="PUT">
   <div>
     <label for="name">食材名: </label>
-    <input type="text" name="name" id="name" value="<%= @ingredient['name'] %>" required>
+    <input type="text" name="name" id="name" value="<%= h(@ingredient['name']) %>" required>
   </div>
   <div>
     <label for="trader">仕入れ先: </label>
-    <input type="text" name="trader" id="trader" value="<%= @ingredient['trader'] %>" required>
+    <input type="text" name="trader" id="trader" value="<%= h(@ingredient['trader']) %>" required>
   </div>
   <div>
     <label for="unit">仕入れ単位: </label>
@@ -23,7 +23,7 @@
   </div>
   <div>
     <label for="cost">仕入れ原価: </label>
-    <input type="number" name="cost" id="cost" value="<%= @ingredient['cost'] %>" required>
+    <input type="number" name="cost" id="cost" value="<%= h(@ingredient['cost']) %>" required>
   </div>
   <div>
     <label for="budomari">歩留まり: </label>

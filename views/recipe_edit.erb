@@ -3,20 +3,20 @@
   <input type="hidden" name="_method" value="PUT">
   <div>
     <label for="name">料理名: </label>
-    <input type="text" name="name" id="name" value="<%= @recipe['name'] %>" required>
+    <input type="text" name="name" id="name" value="<%= h(@recipe['name']) %>" required>
   </div>  
   <div>
     <label for="price">値段: </label>
-    <input type="number" name="price" id="price" value="<%= @recipe['price'] %>" required>
+    <input type="number" name="price" id="price" value="<%= h(@recipe['price']) %>" required>
   </div>
   <div>
     <label for="img">画像: </label>
-    <input type="hidden" name="img" value="<%= @recipe['image'] %>">
+    <input type="hidden" name="img" value="<%= h(@recipe['image']) %>">
     <input type="file" name="update_img">
   </div>
   <div>
     <label for="description">作り方: </label>
-    <textarea name="description" id="description" value="<%= @recipe['description'] %>"></textarea>
+    <textarea name="description" id="description" value="<%= h(@recipe['description']) %>"></textarea>
   </div>
   <div>食材</div>
   <div id="append">
@@ -40,7 +40,7 @@
     </div>
     <% @ingredients.each_with_index do |ingredient, i| %>
       <div id="i_form<%= i %>" >
-        <input type="hidden" name="ingredient_meisai_id_<%= i %>" value="<%= ingredient['meisai_id'] %>">
+        <input type="hidden" name="ingredient_meisai_id_<%= i %>" value="<%= h(ingredient['meisai_id']) %>">
         <label for="ingredient_trader_<%= i %>" class="l_trader">仕入れ先: </label>
         <select id="ingredient_trader_<%= i %>" class="s_trader" onChange="return getName(this.value, this.id)">
           <option value="" selected disabled>選択してください</option>
@@ -63,7 +63,7 @@
           <% end %>          
         </select>
         <label for="ingredient_amount_<%= i %>" class="l_amount">使用量: </label>
-        <input type="number" name="ingredient_amount_<%= i %>" id="ingredient_amount_<%= i %>" value="<%= ingredient['amount'] %>" class="t_amount" onChange="getCost(this.id)" step="0.1">
+        <input type="number" name="ingredient_amount_<%= i %>" id="ingredient_amount_<%= i %>" value="<%= h(ingredient['amount']) %>" class="t_amount" onChange="getCost(this.id)" step="0.1">
         <span class="sp_unit_<%= i %>" id="ingredient_unit_<%= i %>">
           <% @s_unit.each do |key, value| %>
             <% if value == ingredient['unit_used'] %>
@@ -72,7 +72,7 @@
           <% end %>
         </span>
         <label>原価: </label>
-        <input type="number" name="ingredient_cost_used_<%= i %>" id="ingredient_cost_used_<%= i %>" value="<%= ingredient['cost_used'] %>" class="t_cost" readonly step="0.1">
+        <input type="number" name="ingredient_cost_used_<%= i %>" id="ingredient_cost_used_<%= i %>" value="<%= h(ingredient['cost_used']) %>" class="t_cost" readonly step="0.1">
         <span>円</span>
         <input type="button" value="−" class="r_btn" id="remove_btn_<%= i %>">
       </div>

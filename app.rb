@@ -29,6 +29,11 @@ before do
     session[:notice] = {message: "ログインして下さい"} 
     redirect '/signin'
   end
+  # フォームにcsrf_token設置
+  if request.request_method == 'GET'    
+    csrf_token_generate
+  end
+
   # ログインしていればsessionからユーザー名を取得
   @name = session[:user]['name'] if session[:user]
 
@@ -52,17 +57,23 @@ get '/' do
   return erb :index
 end
 
+get '/top' do
+  # 特に処理はなし。erb返すだけ
+  return erb :top
+end
+
 # ---新規登録ページ---
 get '/signup' do
-  # フォームにcsrf_token設置
-  csrf_token_generate  
   return erb :signup
 end
 
 # ---新規登録処理---
 post '/signup' do
   # 無効なcsrf_tokenを受け取った場合リダイレクト
-  return redirect '/signup' unless params[:csrf_token] == session[:csrf_token]
+  unless params[:csrf_token] == session[:csrf_token]
+    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    return redirect '/signup'
+  end
   name = params[:name]
   email = params[:email]
   # パスワード生成処理。まずはsaltを生成
@@ -77,21 +88,23 @@ post '/signup' do
     session[:notice] = { message:"ようこそ！#{user['name']}さん!"}
     return redirect '/top'
   rescue PG::UniqueViolation #例外処理 メールアドレスがかぶっている場合
-    session[:notice] = { message:"メールアドレスはすでに使用されています。"}
-    return redirect '/top'
+    session[:notice] = { message:"入力したメールアドレスはすでに使用されています。"}
+    return redirect '/signup'
   end
 end
 
 # ---ログインページ---
 get "/signin" do
-  csrf_token_generate
   return erb :signin
 end
 
 # ---ログイン処理---
 post "/signin" do
   # 無効なcsrf_tokenを受け取った場合リダイレクト
-  return redirect '/signin' unless params[:csrf_token] == session[:csrf_token]
+  unless params[:csrf_token] == session[:csrf_token]
+    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    return redirect '/signin'
+  end
   email = params[:email]
   password = params[:password]
   # 一旦emailでユーザーを取得
@@ -111,6 +124,10 @@ end
 
 # ---ログアウト処理---
 delete "/signout" do
+  unless params[:csrf_token] == session[:csrf_token]
+    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    return redirect '/top'
+  end  
   # ユーザーのセッション情報をクリアしルートページに遷移
   session[:user] = nil
   session[:notice] = { message:"ログアウトしました！"}
@@ -119,6 +136,10 @@ end
 
 # ---アカウント削除処理---
 delete "/user" do
+  unless params[:csrf_token] == session[:csrf_token]
+    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    return redirect '/top'
+  end  
   # セッションからユーザー情報を取得し、DBから対応するユーザーを削除
   user = session[:user]
   client.exec_params("DELETE FROM users WHERE email = $1 AND password_hash = $2", [user['email'], user['password_hash']]).to_a.first
@@ -138,7 +159,6 @@ end
 
 # ---食材登録ページ---
 get '/ingredients/new' do
-  csrf_token_generate
   return erb :ingredient_new
 end
 
@@ -158,8 +178,10 @@ end
 
 # ---食材登録処理---
 post "/ingredients" do
-  # 無効なcsrf_tokenを受け取った場合リダイレクト
-  return redirect '/ingredient_new' unless params[:csrf_token] == session[:csrf_token]  
+  unless params[:csrf_token] == session[:csrf_token]
+    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    return redirect '/ingredients/new'
+  end  
   name = params[:name]
   trader = params[:trader]
   unit = params[:unit]
@@ -182,7 +204,6 @@ end
 
 # ---食材編集ページ---
 get '/ingredients/:id/edit' do
-  csrf_token_generate
   # URLから食材idを取得
   ingredient_id = params[:id]
   user_id = session[:user]['id']
@@ -197,6 +218,10 @@ end
 
 # ---食材削除処理---
 delete "/ingredients/:id" do
+  unless params[:csrf_token] == session[:csrf_token]
+    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    return redirect '/ingredients/new'
+  end  
   # URLから食材idを取得
   ingredient_id = params[:id]
   user_id = session[:user]['id']
@@ -208,8 +233,10 @@ end
 
 # ---食材編集処理---
 put "/ingredients/:id" do
-  # 無効なcsrf_tokenを受け取った場合リダイレクト
-  return redirect '/ingredient_new' unless params[:csrf_token] == session[:csrf_token]
+  unless params[:csrf_token] == session[:csrf_token]
+    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    return redirect '/ingredients/new'
+  end  
   ingredient_id = params[:id]
   name = params[:name]
   trader = params[:trader]
@@ -241,7 +268,6 @@ end
 
 # ---レシピ登録ページ---
 get '/recipes/new' do
-  csrf_token_generate
   id = session[:user]['id']
   # レシピには食材も登録させるのでユーザーに紐付いている食材をDBから全て取得  
   @ingredients = client.exec_params("SELECT * FROM ingredients WHERE user_id = #{id} ORDER BY name").to_a
@@ -285,8 +311,10 @@ end
   
 # ---レシピ作成処理---
 post "/recipes" do
-  # 無効なcsrf_tokenを受け取った場合リダイレクト
-  return redirect '/recipe/new' unless params[:csrf_token] == session[:csrf_token]
+  unless params[:csrf_token] == session[:csrf_token]
+    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    return redirect '/recipes/new'
+  end  
   name = params[:name]
   price = params[:price]
   description = params[:description]
@@ -366,7 +394,6 @@ end
     
 # ---レシピ編集ページ---
 get '/recipes/:id/edit' do
-  csrf_token_generate
   # URLからレシピidを取得
   recipe_id = params[:id]
   user_id = session[:user]['id']
@@ -409,7 +436,11 @@ get '/recipes/:id/edit' do
 end
   
 # ---レシピ削除機能---
-delete "/recipes/:id" do    
+delete "/recipes/:id" do
+  unless params[:csrf_token] == session[:csrf_token]
+    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    return redirect '/recipes/new'
+  end    
   recipe_id = params[:id]
   # レシピ削除処理。recipesテーブルの他に、中間テーブルのingredient_resipesテーブルにもデータを削除するのでトランザクションを使用する
   begin
@@ -428,8 +459,10 @@ end
   
 # ---レシピ編集処理---
 put "/recipes/:id" do
-  # 無効なcsrf_tokenを受け取った場合リダイレクト
-  return redirect '/recipes/new' unless params[:csrf_token] == session[:csrf_token]
+  unless params[:csrf_token] == session[:csrf_token]
+    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    return redirect '/recipes/new'
+  end  
 
   name = params[:name]
   price = params[:price]
@@ -514,7 +547,10 @@ end
 
 # ---仕入先に対応する食材名を取得---
 post '/sp_getingredient_name/:trader' do
-  return redirect '/recipes/new' unless params[:csrf_token] == session[:csrf_token]
+  unless params[:csrf_token] == session[:csrf_token]
+    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    return redirect '/recipes/new'
+  end  
   trader = params[:trader]
   user_id = session[:user]['id']
   ingredient_name = client.exec_params("SELECT id, name FROM ingredients WHERE trader = '#{trader}' AND user_id = #{user_id} ORDER BY name").to_a  
@@ -524,7 +560,10 @@ end
 
 # ---食材の使用単位を取得---
 post '/sp_getingredient_unit/:id' do
-  return redirect '/recipes/new' unless params[:csrf_token] == session[:csrf_token]
+  unless params[:csrf_token] == session[:csrf_token]
+    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    return redirect '/recipes/new'
+  end  
   ingredient_id = params[:id]
   user_id = session[:user]['id']
   ingredient = client.exec_params("SELECT unit_used FROM ingredients WHERE id = #{ingredient_id} AND user_id = #{user_id}").to_a  
@@ -534,7 +573,10 @@ end
 
 # ---食材の使用原価を取得---
 post '/sp_getingredient_cost/:id' do
-  return redirect '/recipes/new' unless params[:csrf_token] == session[:csrf_token]
+  unless params[:csrf_token] == session[:csrf_token]
+    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    return redirect '/recipes/new'
+  end  
   ingredient_id = params[:id]
   user_id = session[:user]['id']
   ingredient = client.exec_params("SELECT cost_used FROM ingredients WHERE id = #{ingredient_id} AND user_id = #{user_id}").to_a  
