@@ -1,0 +1,409 @@
+@charset "UTF-8";
+
+/* ----- 共通 ----- */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #000;
+  background-color: #fff;
+  font-size: 16px;
+  line-height: 16px;
+  background-image: url("../images/back.png");
+}
+
+h2 {
+ margin-bottom: 20px;
+ font-size: 24px;
+ font-weight: normal;
+}
+
+.mt-1 {
+  margin-top: 10px;
+}
+
+.mt-2 {
+  margin-top: 20px;
+}
+
+.mt-3 {
+  margin-top: 30px;
+}
+
+.ml-1 {
+  margin-left: 10px;
+}
+
+.ml-2 {
+  margin-left: 20px;
+}
+
+.ml-3 {
+  margin-left: 30px;
+}
+
+.align-right {
+  text-align: right;
+}
+
+a {
+  text-decoration: none;
+  display: block;
+  color: #fff;
+}
+
+.container {
+  margin: 30px auto;
+  width: 960px;
+}
+
+.control {
+  margin-left: 30px;
+}
+
+.edit-ct {
+  color: #70bb6f;
+  border-bottom: 1px solid #70bb6f;
+}
+
+.delete-ct {
+  color: #bb2d3a;
+  border-bottom: 1px solid #bb2d3a;
+}
+
+.edit-ct:hover {
+  color: #8dea8b;
+}
+
+.delete-ct:hover {
+  color: #ec3948;
+}
+
+.link-name {
+  color: #000;
+  border-bottom: 1px solid #000;
+  display: inline;
+}
+
+.link-name:hover {
+  color: #888;
+}
+
+.f-container {
+  display: flex;
+}
+
+.btn {
+  font-size: 20px;
+  padding: 3px 20px;
+  border-radius: 5px;
+  border: none;
+  color: #fff;
+}
+
+.btn-green {
+  background-color: #70bb6f;
+}
+
+.btn-blue {
+  background-color: #0dadbc;
+}
+
+.btn-red {
+  background-color: #bb2d3a;
+}
+
+.btn-green:hover {
+  background-color: #8dea8b;
+}
+
+.btn-blue:hover {
+  background-color: #10e3f7;
+}
+
+.btn-red:hover {
+  background-color: #ec3948;
+}
+
+.btn-right {
+  display: block;
+  margin: 0 0 0 auto;
+}
+
+.form-group {
+  background-color: #fff;
+  border: 5px solid #212612;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px 0 rgba(0, 0, 0, .5);
+  padding: 30px 10px 20px 10px;
+  margin: 60px auto;
+}
+
+label {
+  display: block;
+  color: #666;
+  font-size: 18px;
+}
+
+input[type="text"],[type="email"],[type="password"],[type="number"]
+,select,textarea {
+  border-radius: 5px;
+  border: 2px solid #e08e91;
+  padding: 3px;
+  margin-bottom: 10px;
+  width: 100%;
+  font-size: 18px;
+  transition: all 0.5s;
+}
+
+input[type="text"]:focus,[type="email"]:focus,[type="password"]:focus,[type="number"]:focus,select:focus,textarea:focus
+,input[type="text"]:hover,[type="email"]:hover,[type="password"]:hover,[type="textarea"]:hover,[type="number"]:hover,select:hover,textarea:hover {
+  outline:none;
+  border: 2px solid #da3c41;
+  box-shadow: 0 10px 10px 0 rgba(0, 0, 0, .3);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+table th, table td {
+  padding: 10px 0;
+  text-align: center;
+  border-right: 1px solid #212612;
+}
+
+table th:last-child, table td:last-child {
+  border-right: none;
+}
+
+table th {
+  background-color: #0dadbc;
+  color: #fff;
+}
+
+table tr {
+  background-color: #fff;
+}
+
+table tr:nth-child(odd) {
+  background-color: #eee
+}
+
+.flash {
+  color: #fff;
+  width: 600px;
+  margin-top: 10px;
+  box-shadow: 0 10px 25px 0 rgba(0, 0, 0, .5);
+  line-height: 32px;
+  margin: 10px auto;
+  border-radius: 5px;
+  padding: 4px;
+}
+
+.b-flash {
+  background-color: #0dadbc;
+}
+
+.r-flash {
+  background-color: #da3c41;
+}
+
+.dropdwn {
+  position: relative;
+}
+
+.dropdwn_menu{
+  display: none;
+  position: absolute;
+  right: 0;
+  background: #fff;
+}
+
+.dropdwn_menu li a {
+  margin: 0;
+  background-color: #da3c41;
+}
+
+.dropdwn_menu li a:hover {
+  background-color: #e08e91;
+}
+
+/* ----- ヘッダー ----- */
+header {
+  height: 60px;
+  box-shadow: 0 10px 25px 0 rgba(0, 0, 0, .5);
+  display: flex;
+  justify-content: space-between;
+  background-color: #fff;
+}
+
+header li a {
+  margin-left: 20px;
+  font-size: 20px;
+  line-height: 60px;
+  width: 120px;
+  text-align: center;
+  background-color: #70bb6f;
+}
+
+header li a:hover {
+  background-color: #8dea8b;
+}
+
+/* ----- ルートページ ----- */
+.index {
+  width: 860px;
+  height: 365px;
+  padding: 50px;
+}
+
+.index .f-container {
+  justify-content: space-around;
+}
+
+/* ----- トップページ ----- */
+.top {
+  width: 860px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.top img {
+  margin-top: 50px;
+}
+
+.top button {
+  margin-top: 10px;
+}
+
+/* ----- 新規登録ページ ----- */
+.signup {
+  width: 500px;
+}
+
+.top .f-container {
+  justify-content: space-around;
+  margin-left: 50px;
+}
+
+/* ----- ログインページ ----- */
+.signin {
+  width: 500px;
+}
+
+/* ----- 食材一覧ページ ----- */
+.ingredient-table {
+  padding: 0 80px;
+}
+
+/* ----- 食材登録、編集、詳細ページ ----- */
+.ingredient-form {
+  width: 660px;
+  padding: 30px;
+}
+
+.ingredient-form.form-group {
+  margin-top: 0;
+}
+
+.ingredient-form form .f-container {
+  justify-content: space-between;
+}
+
+.ingredient-form form .btn {
+  margin-top: 8px;
+}
+
+.ingredient form label {
+  font-size: 14px;
+  color: #37a032;
+}
+
+.ingredient small {
+  font-size: 12px;
+}
+
+/* ----- レシピ登録ページ ----- */
+.recipe-form {
+  padding: 40px;
+}
+
+.recipe-form.form-group {
+  margin-top: 0;
+}
+
+.recipe-form .form-title {
+  font-size: 20px;
+}
+
+.recipe-form textarea {
+  width: 380px;
+  height: 160px;
+}
+
+.recipe-form span {
+  margin-top: 15px;
+}
+
+.recipe-form .btn-red {
+  padding: 0;
+  height: 30px;
+  margin-top: 15px;
+}
+
+.recipe-form .btn-blue {
+  padding: 0;
+  height: 30px;
+  width: 30px;
+}
+
+.recipe-form .f-container {
+  justify-content: space-between;
+}
+
+/* ----- レシピ詳細ページ ----- */
+.recipe.form-group {
+  width: 880px;
+  padding: 20px 40px;
+  margin-top: 0;
+}
+
+.recipe .f-container {
+  justify-content: space-between;
+}
+
+.recipe textarea {
+  width: 400px;
+  height: 200px;
+  padding: 3px;
+  font-size: 14px;
+}
+
+.recipe small {
+  font-size: 12px;
+}
+
+.recipe .ingredient-table {
+  width: 100%;
+  padding: 0;
+}
+
+.recipe form label, .green {
+  font-size: 14px;
+  color: #37a032;
+}
+
+.recipe .btn-flex {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ----- フッター ----- */
+footer {
+  margin-top: 200px;
+}
+
+footer small {
+  color: #bb2d3a;
+}

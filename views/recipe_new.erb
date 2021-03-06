@@ -1,66 +1,96 @@
-<form action="/recipes" method="post" enctype="multipart/form-data" id="r_form">
-  <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">
-  <div>
-    <label for="name">料理名: </label>
-    <input type="text" name="name" id="name" required>
-  </div>  
-  <div>
-    <label for="price">値段: </label>
-    <input type="number" name="price" id="price" required>
-  </div>
-  <div>
-    <label for="img">画像: </label>
-    <input type="file" name="img">
-  </div>
-  <div>
-    <label for="description">作り方: </label>
-    <textarea name="description" id="description"></textarea>
-  </div>
-  <div>食材</div>
-  <div id="append">
-    <div id="i_form" style="display: none;">
-      <label class="l_trader">仕入れ先: </label>
-      <select class="s_trader" onChange="getName(this.value, this.id)">
-        <option value="" selected disabled>選択してください</option>
-        <% @s_traders.each do |key| %>
-          <option value="<%= key['trader'] %>"><%= key['trader'] %></option>
-        <% end %>
-      </select>
-      <label class="l_name">食材名: </label>
-      <select class="s_name" disabled onChange="getUnit(this.value, this.id)"></select>
-      <label class="l_amount">使用量: </label>
-      <input type="number" class="t_amount" onChange="getCost(this.id)" step="0.1">      
-      <span class="sp_unit">単位</span>
-      <label>原価: </label>
-      <input type="text" class="t_cost" readonly>
-      <span>円</span>
-      <input type="button" value="−" class="r_btn" onClick="removeInput(this.id)">
+<h2>レシピ登録</h2>
+<div class="recipe-form form-group">  
+  <form action="/recipes" method="post" enctype="multipart/form-data" id="r_form">
+    <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">
+    <div class="f-container">
+      <div>
+        <div>
+          <label for="name">料理名: </label>
+          <input type="text" name="name" id="name" style="width: 400px;" required>
+        </div>  
+        <div>
+          <label for="price">値段: </label>
+          <input type="number" name="price" id="price" style="width: 200px;" required><small>円</small>
+        </div>
+        <div>
+          <label for="img">画像: </label>
+          <input type="file" name="img">
+        </div>
+      </div>
+      <div>
+        <div>
+          <label for="description">作り方: </label>
+          <textarea name="description" id="description"></textarea>
+        </div>
+      </div>
     </div>
-    <div id="i_form0">
-      <label for="ingredient_trader_0" class="l_trader">仕入れ先: </label>
-      <select id="ingredient_trader_0" class="s_trader" onChange="getName(this.value, this.id)">
-        <option value="" selected disabled>選択してください</option>
-        <% @s_traders.each do |key| %>
-          <option value="<%= key['trader'] %>"><%= key['trader'] %></option>
-        <% end %>
-      </select>
-      <label for="ingredient_name_0" class="l_name">食材名: </label>
-      <select name="ingredient_id_0" id="ingredient_name_0" class="s_name" disabled onChange="getUnit(this.value, this.id)"></select>
-      <label for="ingredient_amount_0" class="l_amount">使用量: </label>
-      <input type="number" name="ingredient_amount_0" id="ingredient_amount_0" class="t_amount" onChange="getCost(this.id)" step="0.1">
-      <span class="sp_unit_0" id="ingredient_unit_0">単位</span>
-      <label>原価: </label>
-      <input type="number" name="ingredient_cost_used_0" id="ingredient_cost_used_0" class="t_cost" readonly step="0.1">
-      <span>円</span>
-      <input type="button" value="−" class="r_btn" id="remove_btn_0">
+    <div class="form-title">使用食材</div>    
+    <div id="append" class="mt-2">
+      <div id="i_form" style="display: none;">
+        <div class="f-container">
+          <div>
+            <label class="l_trader">仕入れ先: </label>
+            <select class="s_trader" onChange="getName(this.value, this.id)" style="width: 200px;">
+              <option value="" selected disabled>選択してください</option>
+              <% @s_traders.each do |key| %>
+                <option value="<%= key['trader'] %>"><%= key['trader'] %></option>
+              <% end %>
+            </select>
+          </div>
+          <div>
+            <label class="l_name">食材名: </label>
+            <select class="s_name" disabled onChange="getUnit(this.value, this.id)" style="width: 200px;"></select>
+          </div>
+          <div>
+            <label class="l_amount">使用量: </label>
+            <input type="number" class="t_amount" style="width: 130px;" onChange="getCost(this.id)" step="0.1">      
+          </div>
+          <div class="mt-3"><span class="sp_unit">使用単位</span></div>
+          <div>
+            <label>原価: </label>
+            <input type="text" class="t_cost" style="width: 130px;" readonly>
+            <span>円</span>
+          </div>
+          <input type="button" value="−" class="r_btn btn btn-red" style="width: 30px;" onClick="removeInput(this.id)">
+        </div>
+      </div>    
+      <div id="i_form0">
+        <div class="f-container">
+          <div>
+            <label for="ingredient_trader_0" class="l_trader">仕入れ先: </label>
+            <select id="ingredient_trader_0" class="s_trader" onChange="getName(this.value, this.id)" style="width: 200px;">
+              <option value="" selected disabled>選択してください</option>
+              <% @s_traders.each do |key| %>
+                <option value="<%= key['trader'] %>"><%= key['trader'] %></option>
+              <% end %>
+            </select>
+          </div>
+          <div>
+            <label for="ingredient_name_0" class="l_name">食材名: </label>
+            <select name="ingredient_id_0" id="ingredient_name_0" class="s_name" style="width: 200px;" disabled onChange="getUnit(this.value, this.id)"></select>
+          </div>
+          <div>
+            <label for="ingredient_amount_0" class="l_amount">使用量: </label>
+            <input type="number" name="ingredient_amount_0" id="ingredient_amount_0" style="width: 130px;" class="t_amount" onChange="getCost(this.id)" step="0.1">
+          </div>
+          <div class="mt-3"><span class="sp_unit_0" id="ingredient_unit_0">使用単位</span></div>
+          <div>
+            <label>原価: </label>
+            <input type="number" name="ingredient_cost_used_0" id="ingredient_cost_used_0" style="width: 130px;" class="t_cost" readonly step="0.1">
+            <span>円</span>
+          </div>
+          <input type="button" value="−" class="r_btn btn btn-red" id="remove_btn_0" onClick="removeInput(this.id)" style="width: 30px;">
+        </div>
+      </div>
     </div>
-  </div>
-  <input type="button" value="＋" onClick="addInput()">
-  <input type="submit" value="登録" onClick="return checkForm()">
-</form>
+    <div><input type="button" value="＋" class="btn btn-blue" onClick="addInput()"></div>
+    <div><input type="submit" value="登録" class="btn btn-green btn-right mt-1" onClick="return checkForm()"></div>
+  </form>
+</div>
 
 <script>
-  function getName(trader, index) {    
+  // 仕入れ先に応じた食材名を取得する関数
+  function getName(trader, index) {
     var idx = index.split('_');
     $('#ingredient_name_' + idx[2]).html('');
     $('#ingredient_name_' + idx[2]).prop('disabled', false);
@@ -78,6 +108,7 @@
     });
   }
 
+  // 食材の使用単位を取得する関数
   function getUnit(id, index) {
     var idx = index.split('_');    
     $.ajax({
@@ -91,11 +122,12 @@
       var value = [];
       for(let i=0; i < data.length; i++) {
         value = Object.keys(unit).reduce(function(r, k) { return unit[k] == data[i].unit_used ? k : r }, null);        
-        $('#ingredient_unit_' + idx[2]).html(value);
+        $('#ingredient_unit_' + idx[2]).html('(' + value + ')');
       }
     });
   }
 
+  // 食材の使用量から原価を計算する関数
   function getCost(index) {
     var idx = index.split('_');    
     var ingredient_id = $('#ingredient_name_' + idx[2]).val();
@@ -111,6 +143,7 @@
     });
   }
 
+  // 隠しフォームをクローンして新しいフォームを作成する関数
   var i = 0;
   function addInput() {
     i++;
@@ -126,11 +159,13 @@
     .find('.t_cost').attr({name: 'ingredient_cost_used_' + i, id: 'ingredient_cost_used_' + i});
   }
 
+  // フォームを削除する関数
   function removeInput(index) {
     var idx = index.split('_');
     $('#i_form' + idx[2]).remove();
   }
 
+  // フォームを検証する関数
   function checkForm() {
     $('#r_form').submit(function() {
       var differs = true;

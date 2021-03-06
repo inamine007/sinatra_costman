@@ -24,22 +24,29 @@ client = PG::connect(
 
 # -----共通処理-----
 before do
-  # ログインしていなければ'/signin'に遷移させる
-  unless request.path == '/' || request.path == '/signin' || request.path == '/signup' || session[:user]
-    session[:notice] = {message: "ログインして下さい"} 
-    redirect '/signin'
-  end
-  # フォームにcsrf_token設置
-  if request.request_method == 'GET'    
+  if request.request_method == 'GET' 
+    # フォームにcsrf_token設置   
     csrf_token_generate
   end
 
+  if session[:user]
+    # ログインしてれば'/top'に遷移させる 
+    if request.path == '/' || request.path == '/signin' || request.path == '/signup'
+      redirect '/top'
+    end
+  else # ログインしていなければ'/signin'に遷移させる 
+    unless request.path == '/' || request.path == '/signin' || request.path == '/signup'
+      session[:notice] = { class:"r-flash flash", message: "ログインして下さい"} 
+      redirect '/signin'
+    end
+  end
+  
   # ログインしていればsessionからユーザー名を取得
   @name = session[:user]['name'] if session[:user]
 
   # ---フォームで必要な項目を生成---
   # 単位
-  @s_unit= {'Kg': '0', 'g': '1', 'L': '2', 'ml': '3', '個': '4', '本': '5', '袋': '6'}
+  @s_unit= {'Kg': '0', '100g': '1', 'g': '2', 'L': '3', '100ml': '4', 'ml': '5', '個': '6', '本': '7', '袋': '8'}
   # 歩留まり
   @s_budomari = ['1', '0.9', '0.8', '0.7', '0.6', '0.5', '0.4', '0.3', '0.2', '0.1']
   # 換算数
@@ -47,6 +54,7 @@ before do
 
   # フラッシュメッセージ
   @message = session.delete(:notice)
+
 end
 
 # -----ルーティング-----
@@ -69,11 +77,6 @@ end
 
 # ---新規登録処理---
 post '/signup' do
-  # 無効なcsrf_tokenを受け取った場合リダイレクト
-  unless params[:csrf_token] == session[:csrf_token]
-    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
-    return redirect '/signup'
-  end
   name = params[:name]
   email = params[:email]
   # パスワード生成処理。まずはsaltを生成
@@ -85,26 +88,22 @@ post '/signup' do
     user = client.exec_params("INSERT INTO users (name, email, password_salt, password_hash) VALUES ($1, $2, $3, $4) returning *", [name, email, password_salt, password_hash]).to_a.first
     session[:user] = user
     # sessionに成功メッセージを格納し、トップページにリダイレクト
-    session[:notice] = { message:"ようこそ！#{user['name']}さん!"}
+    session[:notice] = { class: "b-flash flash", message:"ようこそ！#{user['name']}さん!"}
     return redirect '/top'
   rescue PG::UniqueViolation #例外処理 メールアドレスがかぶっている場合
-    session[:notice] = { message:"入力したメールアドレスはすでに使用されています。"}
+    session[:notice] = { class: "r-flash flash", message:"入力したメールアドレスはすでに使用されています。"}
     return redirect '/signup'
   end
 end
 
 # ---ログインページ---
 get "/signin" do
+  # csrf_token_generate
   return erb :signin
 end
 
 # ---ログイン処理---
 post "/signin" do
-  # 無効なcsrf_tokenを受け取った場合リダイレクト
-  unless params[:csrf_token] == session[:csrf_token]
-    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
-    return redirect '/signin'
-  end
   email = params[:email]
   password = params[:password]
   # 一旦emailでユーザーを取得
@@ -113,31 +112,31 @@ post "/signin" do
   user = client.exec_params("SELECT * FROM users WHERE password_hash = $1", [BCrypt::Engine.hash_secret(password, tmpUser['password_salt'])]).to_a.first if tmpUser
   # ユーザーが取得できなければログインページに、取得できればsessionにユーザー情報を格納してトップページに遷移
   if user.nil?
-    session[:notice] = { message:"ログインに失敗しました。"}
+    session[:notice] = { class: "r-flash flash", message:"ログインに失敗しました。"}
     return redirect '/signin'
   else
     session[:user] = user
-    session[:notice] = { message: "ログインしました!"}
-    return redirect '/ingredients'
+    session[:notice] = { class: "b-flash flash", message: "ログインしました!"}
+    return redirect '/top'
   end
 end
 
 # ---ログアウト処理---
 delete "/signout" do
   unless params[:csrf_token] == session[:csrf_token]
-    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    session[:notice] = { class: "r-flash flash", message:"入力を受け取れません。無効なフォームからの送信です。"}
     return redirect '/top'
   end  
   # ユーザーのセッション情報をクリアしルートページに遷移
   session[:user] = nil
-  session[:notice] = { message:"ログアウトしました！"}
+  session[:notice] = { class: "b-flash flash", message:"ログアウトしました！"}
   return redirect '/'
 end
 
 # ---アカウント削除処理---
 delete "/user" do
   unless params[:csrf_token] == session[:csrf_token]
-    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    session[:notice] = { class: "r-flash flash", message:"入力を受け取れません。無効なフォームからの送信です。"}
     return redirect '/top'
   end  
   # セッションからユーザー情報を取得し、DBから対応するユーザーを削除
@@ -145,7 +144,7 @@ delete "/user" do
   client.exec_params("DELETE FROM users WHERE email = $1 AND password_hash = $2", [user['email'], user['password_hash']]).to_a.first
   # ユーザーのセッション情報をクリアしルートページに遷移
   session[:user] = nil
-  session[:notice] = { message:"アカウント削除しました。またのご利用お待ちしております。"}
+  session[:notice] = { class: "b-flash flash", message:"アカウント削除しました。またのご利用お待ちしております。"}
   return redirect '/signin'
 end
 
@@ -153,7 +152,7 @@ end
 get '/ingredients' do
   # セッションからユーザーidを取得し、ユーザーに紐付いている食材をDBから全て取得
   id = session[:user]['id']  
-  @ingredients = client.exec_params("SELECT * FROM ingredients WHERE user_id = #{id} ORDER BY trader").to_a
+  @ingredients = client.exec_params("SELECT *, to_char(created_at, 'yyyy/mm/dd') as created FROM ingredients WHERE user_id = #{id} ORDER BY trader").to_a
   return erb :ingredients
 end
 
@@ -179,7 +178,7 @@ end
 # ---食材登録処理---
 post "/ingredients" do
   unless params[:csrf_token] == session[:csrf_token]
-    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    session[:notice] = { class: "r-flash flash", message:"入力を受け取れません。無効なフォームからの送信です。"}
     return redirect '/ingredients/new'
   end  
   name = params[:name]
@@ -196,9 +195,9 @@ post "/ingredients" do
   client.exec_params(
     "INSERT INTO ingredients (name, trader, unit, cost, budomari, unit_used, converted_number, cost_used, user_id)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
-    [name, trader, unit, cost, budomari, unit_used, converted_number, cost_used.to_i, user_id]
+    [name, trader, unit, cost, budomari, unit_used, converted_number, cost_used, user_id]
   )
-  session[:notice] = { message:"#{name}を登録しました!"}
+  session[:notice] = { class: "b-flash flash", message:"#{name}を登録しました!"}
   return redirect '/ingredients'
 end
 
@@ -219,7 +218,7 @@ end
 # ---食材削除処理---
 delete "/ingredients/:id" do
   unless params[:csrf_token] == session[:csrf_token]
-    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    session[:notice] = { class: "r-flash flash", message:"入力を受け取れません。無効なフォームからの送信です。"}
     return redirect '/ingredients/new'
   end  
   # URLから食材idを取得
@@ -227,14 +226,14 @@ delete "/ingredients/:id" do
   user_id = session[:user]['id']
   # 食材のidとユーザーのidから対応する食材をDBから削除
   client.exec_params("DELETE FROM ingredients WHERE id = #{ingredient_id} AND user_id = #{user_id}")
-  session[:notice] = { message:"削除しました。"}
+  session[:notice] = { class: "b-flash flash", message:"削除しました。"}
   return redirect "/ingredients" 
 end
 
 # ---食材編集処理---
 put "/ingredients/:id" do
   unless params[:csrf_token] == session[:csrf_token]
-    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    session[:notice] = { class: "r-flash flash", message:"入力を受け取れません。無効なフォームからの送信です。"}
     return redirect '/ingredients/new'
   end  
   ingredient_id = params[:id]
@@ -252,9 +251,9 @@ put "/ingredients/:id" do
     "UPDATE ingredients
     SET name = $1, trader = $2, unit = $3, cost = $4, budomari = $5, unit_used = $6, converted_number = $7, cost_used = $8
     WHERE id = #{ingredient_id}",
-    [name, trader, unit, cost, budomari, unit_used, converted_number, cost_used.to_i]
+    [name, trader, unit, cost, budomari, unit_used, converted_number, cost_used]
   )
-  session[:notice] = { message:"#{name}を編集しました。"}
+  session[:notice] = { class: "b-flash flash", message:"#{name}を編集しました。"}
   return redirect "/ingredients/#{ingredient_id}"
 end
 
@@ -262,7 +261,7 @@ end
 get '/recipes' do
   # セッションからユーザーidを取得し、ユーザーに紐付いているレシピをDBから全て取得
   id = session[:user]['id']
-  @recipes = client.exec_params("SELECT * FROM recipes WHERE user_id = #{id} ORDER BY name").to_a
+  @recipes = client.exec_params("SELECT *, to_char(created_at, 'yyyy/mm/dd') as created FROM recipes WHERE user_id = #{id} ORDER BY name").to_a
   return erb :recipes
 end
 
@@ -295,6 +294,7 @@ get '/recipes/:id' do
       , ir.ingredient_id
       , ing.name
       , ing.unit_used
+      , ing.trader
       , ir.amount
       , ir.cost_used
     FROM
@@ -312,7 +312,7 @@ end
 # ---レシピ作成処理---
 post "/recipes" do
   unless params[:csrf_token] == session[:csrf_token]
-    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    session[:notice] = { class: "r-flash flash", message:"入力を受け取れません。無効なフォームからの送信です。"}
     return redirect '/recipes/new'
   end  
   name = params[:name]
@@ -382,11 +382,11 @@ post "/recipes" do
     end
     # エラーがなければトランザクションを終了し、DBに反映
     client.exec("COMMIT")
-    session[:notice] = { message:"#{name}を登録しました。"}
+    session[:notice] = { class: "b-flash flash", message:"#{name}を登録しました。"}
     return redirect "/recipes/#{recipe_id['id']}"
   rescue
     # エラーがあれば処理を全てキャンセルする
-    session[:notice] = {message: "登録できませんでした。もう一度やり直して下さい。"}
+    session[:notice] = { class: "r-flash flash", message: "登録できませんでした。もう一度やり直して下さい。"}
     client.exec("ROLLBACK")
     return redirect "/recipes/new"
   end
@@ -438,20 +438,20 @@ end
 # ---レシピ削除機能---
 delete "/recipes/:id" do
   unless params[:csrf_token] == session[:csrf_token]
-    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    session[:notice] = { class: "r-flash flash", message:"入力を受け取れません。無効なフォームからの送信です。"}
     return redirect '/recipes/new'
-  end    
+  end
   recipe_id = params[:id]
   # レシピ削除処理。recipesテーブルの他に、中間テーブルのingredient_resipesテーブルにもデータを削除するのでトランザクションを使用する
   begin
     client.exec("BEGIN")
     client.exec_params("DELETE FROM recipes WHERE id = #{recipe_id}")
     client.exec_params("DELETE FROM ingredient_recipes WHERE id = #{recipe_id}")
-    session[:notice] = { message:"削除しました。"}
+    session[:notice] = { class: "r-flash flash", message:"削除しました。"}
     client.exec("COMMIT")
     return redirect "/recipes"
   rescue
-    session[:notice] = { message:"削除に失敗しました。"}
+    session[:notice] = { class: "r-flash flash", message:"削除に失敗しました。"}
     client.exec("ROLLBACK")
     return redirect "/recipes/#{recipe_id}"
   end
@@ -460,7 +460,7 @@ end
 # ---レシピ編集処理---
 put "/recipes/:id" do
   unless params[:csrf_token] == session[:csrf_token]
-    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    session[:notice] = { class: "r-flash flash", message:"入力を受け取れません。無効なフォームからの送信です。"}
     return redirect '/recipes/new'
   end  
 
@@ -534,10 +534,10 @@ put "/recipes/:id" do
       end
     end
     client.exec("COMMIT")
-    session[:notice] = { message:"#{name}を編集しました。"}
+    session[:notice] = { class: "b-flash flash", message:"#{name}を編集しました。"}
     return redirect "/recipes/#{recipe_id}"
   rescue
-    session[:notice] = { message: "更新できませんでした。もう一度やり直して下さい。" }
+    session[:notice] = { class: "r-flash flash", message: "更新できませんでした。もう一度やり直して下さい。" }
     client.exec("ROLLBACK")
     return redirect "/recipes/#{recipe_id}/edit"
   end
@@ -548,7 +548,7 @@ end
 # ---仕入先に対応する食材名を取得---
 post '/sp_getingredient_name/:trader' do
   unless params[:csrf_token] == session[:csrf_token]
-    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    session[:notice] = { class: "r-flash flash", message:"入力を受け取れません。無効なフォームからの送信です。"}
     return redirect '/recipes/new'
   end  
   trader = params[:trader]
@@ -561,7 +561,7 @@ end
 # ---食材の使用単位を取得---
 post '/sp_getingredient_unit/:id' do
   unless params[:csrf_token] == session[:csrf_token]
-    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    session[:notice] = { class: "r-flash flash", message:"入力を受け取れません。無効なフォームからの送信です。"}
     return redirect '/recipes/new'
   end  
   ingredient_id = params[:id]
@@ -574,7 +574,7 @@ end
 # ---食材の使用原価を取得---
 post '/sp_getingredient_cost/:id' do
   unless params[:csrf_token] == session[:csrf_token]
-    session[:notice] = { message:"入力を受け取れません。無効なフォームからの送信です。"}
+    session[:notice] = { class: "r-flash flash", message:"入力を受け取れません。無効なフォームからの送信です。"}
     return redirect '/recipes/new'
   end  
   ingredient_id = params[:id]

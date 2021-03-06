@@ -1,34 +1,73 @@
-<div>
-  <div>作成日：</div>
-  <div><%= h(@ingredient['created']) %></div>
-  <br>
-  <div>食材名: </div>
-  <div><%= h(@ingredient['name']) %></div>
-  <br>
-  <div>仕入れ先: </div>
-  <div><%= h(@ingredient['trader']) %></div>
-  <br>
-  <div>仕入れ単位: </div>
-  <div><%= @s_unit.key(@ingredient['unit']) %></div>
-  <br>
-  <div>仕入れ原価: </div>
-  <div><%= h(@ingredient['cost']) %></div>
-  <br>
-  <div>歩留まり: </div>
-  <div><%= h(@ingredient['budomari']) %></div>
-  <br>
-  <div>使用単位: </div>
-  <div><%= @s_unit.key(@ingredient['unit_used']) %></div>
-  <br>
-  <div>換算数: </div>
-  <div><%= h(@ingredient['converted_number']) %></div>
-  <br>
-  <div>使用原価: </div>
-  <div><%= h(@ingredient['cost_used']) %></div>
-  <button><a href="/ingredients/<%= @ingredient['id'] %>/edit">編集</a></button>
+<h2>食材詳細</h2>
+<div class="ingredient-form ingredient form-group">
   <form action="/ingredients/<%= @ingredient['id'] %>" method="post">
-    <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">             
-    <input type="hidden" name="_method" value="DELETE">
-    <input type="submit" value="削除" onClick="return deleteConfirm()">
+    <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">
+    <input type="hidden" name="_method" value="PUT">
+    <div class="f-container">
+      <div>
+        <div>
+          <label>食材名: </label>
+          <input type="text"  value="<%= h(@ingredient['name']) %>" style="width: 250px;" readonly>
+        </div>
+        <div>
+          <label>仕入れ先: </label>
+          <input type="text" value="<%= h(@ingredient['trader']) %>" style="width: 250px;" readonly>
+        </div>
+        <div class="f-container">
+          <div>
+            <label>仕入れ原価: </label>
+            <input type="text" value="<%= h(@ingredient['cost']) %>円" style="width: 120px;" readonly>
+          </div>
+          <div>
+            <label>使用原価: </label>
+            <input type="text" value="<%= h(@ingredient['cost_used']) %>円" style="width: 120px;" readonly>
+          </div>
+        </div>
+      </div>
+      <div class="f-container">
+        <div>
+          <div>
+            <div>
+              <label>仕入れ単位: </label>
+              <input type="text" 
+              <% @s_unit.each do |key, value| %>
+                <% if value == h(@ingredient['unit']) %>
+                  value="<%= key %>"
+                <% end %>
+              <% end %> style="width: 130px;" readonly>
+            </div>
+          </div>
+          <div>
+              <label>歩留まり: </label>
+              <input type="text" value="<%= h(@ingredient['budomari']) %>" style="width: 130px;" readonly>
+          </div>
+          <button class="btn btn-green"><a href="/ingredients/<%= @ingredient['id'] %>/edit">編集</a></button>
+        </div>
+        <div class="ml-2">
+          <div>
+              <label>使用単位: </label>
+              <input type="text" 
+              <% @s_unit.each do |key, value| %>
+                <% if value == h(@ingredient['unit_used']) %>
+                  value="<%= key %>"
+                <% end %>
+              <% end %> style="width: 130px;" readonly>
+          </div>
+          <div>
+              <label>換算数: </label>
+              <input type="text" value="<%= h(@ingredient['converted_number']) %>" style="width: 130px;" readonly>
+          </div>         
+          <button class="btn btn-red" onClick="return shosai_delete()">削除</button>
+          <div style="display: none;">
+            <form action="/ingredients/<%= @ingredient['id'] %>" method="post" id="deleteform">
+              <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">             
+              <input type="hidden" name="_method" value="DELETE">
+              <input type="submit" value="削除">
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </form>
+  <div class="align-right"><small>登録日:<%= @ingredient['created'] %></small></div>
 </div>

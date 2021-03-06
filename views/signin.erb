@@ -1,12 +1,14 @@
-<form action="/signin" method="post">
-  <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">
-  <div>
-    <label for="email">メールアドレス: </label>
-    <input type="email" name="email" id="email" required>
-  </div>
-  <div>
-    <label for="password">パスワード: </label>
-    <input type="password" name="password" id="password" required>
-  </div>
-  <input type="submit" value="サインイン">
-</form>
+<div class="signin form-group">
+  <form action="/signin" method="post">
+    <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">
+    <div>
+      <label for="email">メールアドレス: </label>
+      <input type="email" name="email" id="email" required>
+    </div>
+    <div>
+      <label for="password">パスワード: </label>
+      <input type="password" name="password" id="password" required>
+    </div>
+    <div class="mt-2"><input type="submit" class="btn btn-green btn-right" value="ログイン"></div>
+  </form>
+</div>

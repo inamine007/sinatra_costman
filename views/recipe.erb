@@ -1,38 +1,81 @@
-<div>
-  <div>作成日：</div>
-  <div><%= h(@recipe['created']) %></div>
-  <br>
-  <div>レシピ名：</div>
-  <div><%= h(@recipe['name']) %></div>
-  <div>作り方：</div>
-  <div><%= h(@recipe['description']) %></div>
-  <div>値段：</div>
-  <div><%= h(@recipe['price']) %>円</div>
-  <div>料理原価：</div>
-  <div><%= h(@recipe['cost']) %>円</div>
-  <div>原価率：</div>
-  <div><%= h(@recipe['cost_rate']) %>%</div>
-  <div><img src="/images/<%= h(@recipe['image']) %>"></div>
-  <div>食材：</div>
-  <% @ingredients.each do |ingredient| %>
-    <div>食材名：</div>
-    <div><%= h(ingredient['name']) %></div>
-    <div>使用量：</div>
-    <div>
-      <%= h(ingredient['amount']) %>
-      <% @s_unit.each do |key, value| %>
-        <% if ingredient['unit_used'] == value %>
-          <%= key %>
-        <% end %>
-      <% end %>
+<h2>レシピ詳細</h2>
+<div class="recipe form-group">  
+  <form action="/recipes" method="post" enctype="multipart/form-data" id="r_form">
+    <div class="f-container">
+      <div>
+        <div>
+          <label for="name">料理名: </label>
+          <input type="text" value="<%= h(@recipe['name']) %>" style="width: 400px;" readonly>
+        </div>
+        <div class="f-container">
+          <div>
+            <label for="price">値段: </label>
+            <input type="text" value="<%= h(@recipe['price']) %>円" style="width: 120px;" readonly>
+          </div>
+          <div class="ml-2">
+            <label for="price">原価: </label>
+            <input type="text" value="<%= h(@recipe['cost']) %>円" style="width: 120px;" readonly>
+          </div>
+          <div class="ml-2">
+            <label for="price">原価率: </label>
+            <input type="text" value="<%= h(@recipe['cost_rate']) %>%" style="width: 120px;" readonly>
+          </div>
+        </div>
+        <div>
+          <label for="description">作り方: </label>
+          <textarea readonly><%= h(@recipe['description']) %></textarea>
+        </div>
+        <div><small>作成日:<%= h(@recipe['created']) %></small></div>
+      </div>
+      <div>
+        <div>
+          <img src="/images/<%= h(@recipe['image']) %>" width="360" height="360" alt="レシピ画像">
+        </div>
+      </div>
     </div>
-    <div>原価：</div>
-    <div><%= h(ingredient['cost_used']) %>円</div>
-  <% end %>
-  <button><a href="/recipes/<%= @recipe['id'] %>/edit">編集</a></button>
-  <form action="/recipes/<%= @recipe['id'] %>" method="post">
-    <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">             
-    <input type="hidden" name="_method" value="DELETE">
-    <input type="submit" value="削除" onClick="return deleteConfirm()">
   </form>
+  <div class="mt-2 green">使用食材</div>
+  <div class="ingredient-table">
+    <table>
+      <tr>
+        <th width="300">仕入れ先</th>
+        <th width="200">食材名</th>
+        <th width="150">使用量</th>
+        <th width="150">使用原価</th>
+      </tr>
+      <% @ingredients.each_with_index do |ingredient| %>
+        <tr>
+          <td><%= h(ingredient['trader']) %></td>
+          <td><%= h(ingredient['name']) %></td>
+          <td>
+            <%= h(ingredient['amount']) %>
+            <% @s_unit.each do |key, value| %>
+              <% if value == ingredient['unit_used'] %>
+                <small>(<%= key %>)</small>
+              <% end %>
+            <% end %>
+          </td>
+          <td><%= h(ingredient['cost_used']) %><small>円</small></td>
+        </tr>
+        <div style="display: none;">
+          <form action="/ingredients/<%= ingredient['id'] %>" method="post" id="form_<%= ingredient['id'] %>">
+            <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">             
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="submit" value="削除" >
+          </form>
+        </div>
+      <% end %>    
+    </table>
+    <div class="btn-flex mt-2">
+      <button class="btn btn-green"><a href="/recipes/<%= @recipe['id'] %>/edit">編集</a></button>
+      <button class="btn btn-red ml-2" onClick="return shosai_delete()">削除</button>
+    </div>
+    <div style="display: none;">
+      <form action="/recipes/<%= @recipe['id'] %>" method="post" id="deleteform">
+        <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">             
+        <input type="hidden" name="_method" value="DELETE">
+        <input type="submit" value="削除">
+      </form>
+    </div>
+  </div>
 </div>

@@ -1,48 +1,66 @@
-<form action="/ingredients" method="post">
-  <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">
-  <div>
-    <label for="name">食材名: </label>
-    <input type="text" name="name" id="name" required>
-  </div>
-  <div>
-    <label for="trader">仕入れ先: </label>
-    <input type="text" name="trader" id="trader" required>
-  </div>
-  <div>
-    <label for="unit">仕入れ単位: </label>
-    <select name="unit" id="unit">
-      <% @s_unit.each do |key, value| %>
-        <option value="<%= value %>"><%= key %></option>
-      <% end %>
-    </select>
-  </div>
-  <div>
-    <label for="cost">仕入れ原価: </label>
-    <input type="number" name="cost" id="cost" required>
-  </div>
-  <div>
-    <label for="budomari">歩留まり: </label>
-    <select name="budomari" id="budomari">
-      <% @s_budomari.each do |budomari| %>
-        <option value="<%= budomari %>"><%= budomari %></option>          
-      <% end %>
-    </select>
-  </div>
-  <div>
-    <label for="unit_used">使用単位: </label>
-    <select name="unit_used" id="unit_used">
-      <% @s_unit.each do |key, value| %>
-        <option value="<%= value %>"><%= key %></option>
-      <% end %>      
-    </select>
-  </div>
-  <div>
-    <label for="converted_number">換算数: </label>
-    <select name="converted_number" id="converted_number">
-      <% @s_converted_number.each do |c_number| %>
-        <option value="<%= c_number %>"><%= c_number %></option>          
-      <% end %>
-    </select>
-  </div>
-  <input type="submit" value="登録">
-</form>
+<h2>食材登録</h2>
+<div class="ingredient-form form-group">
+  <form action="/ingredients" method="post">
+    <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">
+    <div class="f-container">
+      <div>
+        <div>
+          <label for="name">食材名: </label>
+          <input type="text" name="name" id="name" style="width: 250px;" required>
+        </div>
+        <div>
+          <label for="trader">仕入れ先: </label>
+          <input type="text" name="trader" id="trader" style="width: 250px;" required>
+        </div>
+        <div>
+          <label for="cost">仕入れ原価: </label>
+          <input type="number" name="cost" id="cost" style="width: 250px;" required>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div class="f-container">
+            <div>
+              <label for="unit">仕入れ単位: </label>
+              <select name="unit" id="unit" style="width: 130px;">
+                <% @s_unit.each do |key, value| %>
+                  <option value="<%= value %>"><%= key %></option>
+                <% end %>
+              </select>
+            </div>
+            <div class="ml-2">
+              <label for="unit_used">使用単位: </label>
+              <select name="unit_used" id="unit_used" style="width: 130px;">
+                <% @s_unit.each do |key, value| %>
+                  <option value="<%= value %>"><%= key %></option>
+                <% end %>      
+              </select>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="f-container">
+            <div>
+              <label for="budomari">歩留まり: </label>
+              <select name="budomari" id="budomari" style="width: 130px;">
+                <% @s_budomari.each do |budomari| %>
+                  <option value="<%= budomari %>"><%= budomari %></option>          
+                <% end %>
+              </select>
+            </div>
+            <div>
+              <label for="converted_number">換算数: </label>
+              <select name="converted_number" id="converted_number" style="width: 130px;">
+                <% @s_converted_number.each do |c_number| %>
+                  <option value="<%= c_number %>"><%= c_number %></option>          
+                <% end %>
+              </select>
+            </div>
+          </div>
+          <input type="submit" class="btn btn-green btn-right" value="登録">
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

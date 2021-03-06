@@ -1,12 +1,29 @@
-<div>
-  <% @ingredients.each do |ingredient| %>
-    <div><%= h(ingredient['trader']) %></div>
-    <div><a href="/ingredients/<%= ingredient['id'] %>"><%= h(ingredient['name']) %></a></div>
-    <button><a href="/ingredients/<%= ingredient['id'] %>/edit">編集</a></button>
-    <form action="/ingredients/<%= ingredient['id'] %>" method="post">
-      <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">             
-      <input type="hidden" name="_method" value="DELETE">
-      <input type="submit" value="削除" onClick="return deleteConfirm()">
-    </form>
-  <% end %>
+<h2>食材一覧</h2>
+<div class="ingredient-table">
+  <table>
+    <tr>
+      <th width="300">仕入れ先</th>
+      <th width="200">食材名</th>
+      <th width="150">登録日</th>
+      <th width="150"></th>
+    </tr>
+    <% @ingredients.each_with_index do |ingredient| %>
+      <tr>
+        <td><%= h(ingredient['trader']) %></td>
+        <td><a class="link-name" href="/ingredients/<%= ingredient['id'] %>"><%= h(ingredient['name']) %></a></td>
+        <td><%= h(ingredient['created']) %></td>
+        <td class="f-container">
+          <a href="/ingredients/<%= ingredient['id'] %>/edit" class="control edit-ct">編集</a>
+          <a href="#" onClick="return table_delete(<%= ingredient['id'] %>)" class="control delete-ct">削除</a>
+        </td>
+      </tr>
+      <div style="display: none;">
+        <form action="/ingredients/<%= ingredient['id'] %>" method="post" id="form_<%= ingredient['id'] %>">
+          <input type="hidden" name="csrf_token" value="<%= @csrf_token %>">             
+          <input type="hidden" name="_method" value="DELETE">
+          <input type="submit" value="削除" >
+        </form>
+      </div>
+    <% end %>    
+  </table>
 </div>
