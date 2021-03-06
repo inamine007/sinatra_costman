@@ -70,8 +70,8 @@ CREATE TABLE public.ingredients (
     cost integer NOT NULL,
     budomari numeric(3,2) DEFAULT '1'::numeric NOT NULL,
     unit_used integer DEFAULT 0 NOT NULL,
-    converted_number numeric(5,4) NOT NULL,
-    cost_used integer NOT NULL,
+    converted_number numeric(5,3) NOT NULL,
+    cost_used numeric(16,1) NOT NULL,
     user_id integer NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
