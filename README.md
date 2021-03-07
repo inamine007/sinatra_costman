@@ -1,7 +1,7 @@
 # COSTMAN
 原価計算付きのレシピ管理アプリ
 ### 動作サンプル
-https://www.notion.so/Sinatra_App-e430cc6b58e44c4eabb196e7c1e8c120#3605479a09ee4772b927e7c77f96032b
+https://radiant-peak-23854.herokuapp.com/
 ### 設計書
 https://docs.google.com/spreadsheets/d/1IRKC8JB2FQu8AjJxnbKWI9oK6l8EikTQ_d6DM5KSC_E/edit?usp=sharing
 
