@@ -7,9 +7,8 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 # gem "rails"
 
 gem "sinatra"
-gem "sinatra-contrib"
-gem "pry"
 gem "pg"
 # gem "digest"
+gem "dotenv"
 gem "bcrypt"
-gem 'sinatra-partial'
+gem 'sinatra-contrib'

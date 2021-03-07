@@ -21,7 +21,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: ingredient_recipes; Type: TABLE; Schema: public; Owner: dev
+-- Name: ingredient_recipes; Type: TABLE; Schema: public; Owner: biimrpdixytdpx
 --
 
 CREATE TABLE public.ingredient_recipes (
@@ -34,10 +34,10 @@ CREATE TABLE public.ingredient_recipes (
 );
 
 
-ALTER TABLE public.ingredient_recipes OWNER TO dev;
+ALTER TABLE public.ingredient_recipes OWNER TO biimrpdixytdpx;
 
 --
--- Name: ingredient_recipes_id_seq; Type: SEQUENCE; Schema: public; Owner: dev
+-- Name: ingredient_recipes_id_seq; Type: SEQUENCE; Schema: public; Owner: biimrpdixytdpx
 --
 
 CREATE SEQUENCE public.ingredient_recipes_id_seq
@@ -49,17 +49,17 @@ CREATE SEQUENCE public.ingredient_recipes_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.ingredient_recipes_id_seq OWNER TO dev;
+ALTER TABLE public.ingredient_recipes_id_seq OWNER TO biimrpdixytdpx;
 
 --
--- Name: ingredient_recipes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: dev
+-- Name: ingredient_recipes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: biimrpdixytdpx
 --
 
 ALTER SEQUENCE public.ingredient_recipes_id_seq OWNED BY public.ingredient_recipes.id;
 
 
 --
--- Name: ingredients; Type: TABLE; Schema: public; Owner: dev
+-- Name: ingredients; Type: TABLE; Schema: public; Owner: biimrpdixytdpx
 --
 
 CREATE TABLE public.ingredients (
@@ -77,10 +77,10 @@ CREATE TABLE public.ingredients (
 );
 
 
-ALTER TABLE public.ingredients OWNER TO dev;
+ALTER TABLE public.ingredients OWNER TO biimrpdixytdpx;
 
 --
--- Name: ingredients_id_seq; Type: SEQUENCE; Schema: public; Owner: dev
+-- Name: ingredients_id_seq; Type: SEQUENCE; Schema: public; Owner: biimrpdixytdpx
 --
 
 CREATE SEQUENCE public.ingredients_id_seq
@@ -92,17 +92,17 @@ CREATE SEQUENCE public.ingredients_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.ingredients_id_seq OWNER TO dev;
+ALTER TABLE public.ingredients_id_seq OWNER TO biimrpdixytdpx;
 
 --
--- Name: ingredients_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: dev
+-- Name: ingredients_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: biimrpdixytdpx
 --
 
 ALTER SEQUENCE public.ingredients_id_seq OWNED BY public.ingredients.id;
 
 
 --
--- Name: recipes; Type: TABLE; Schema: public; Owner: dev
+-- Name: recipes; Type: TABLE; Schema: public; Owner: biimrpdixytdpx
 --
 
 CREATE TABLE public.recipes (
@@ -118,10 +118,10 @@ CREATE TABLE public.recipes (
 );
 
 
-ALTER TABLE public.recipes OWNER TO dev;
+ALTER TABLE public.recipes OWNER TO biimrpdixytdpx;
 
 --
--- Name: recipes_id_seq; Type: SEQUENCE; Schema: public; Owner: dev
+-- Name: recipes_id_seq; Type: SEQUENCE; Schema: public; Owner: biimrpdixytdpx
 --
 
 CREATE SEQUENCE public.recipes_id_seq
@@ -133,17 +133,17 @@ CREATE SEQUENCE public.recipes_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.recipes_id_seq OWNER TO dev;
+ALTER TABLE public.recipes_id_seq OWNER TO biimrpdixytdpx;
 
 --
--- Name: recipes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: dev
+-- Name: recipes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: biimrpdixytdpx
 --
 
 ALTER SEQUENCE public.recipes_id_seq OWNED BY public.recipes.id;
 
 
 --
--- Name: test; Type: TABLE; Schema: public; Owner: dev
+-- Name: test; Type: TABLE; Schema: public; Owner: biimrpdixytdpx
 --
 
 CREATE TABLE public.test (
@@ -152,10 +152,10 @@ CREATE TABLE public.test (
 );
 
 
-ALTER TABLE public.test OWNER TO dev;
+ALTER TABLE public.test OWNER TO biimrpdixytdpx;
 
 --
--- Name: test_id_seq; Type: SEQUENCE; Schema: public; Owner: dev
+-- Name: test_id_seq; Type: SEQUENCE; Schema: public; Owner: biimrpdixytdpx
 --
 
 CREATE SEQUENCE public.test_id_seq
@@ -167,17 +167,17 @@ CREATE SEQUENCE public.test_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.test_id_seq OWNER TO dev;
+ALTER TABLE public.test_id_seq OWNER TO biimrpdixytdpx;
 
 --
--- Name: test_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: dev
+-- Name: test_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: biimrpdixytdpx
 --
 
 ALTER SEQUENCE public.test_id_seq OWNED BY public.test.id;
 
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: dev
+-- Name: users; Type: TABLE; Schema: public; Owner: biimrpdixytdpx
 --
 
 CREATE TABLE public.users (
@@ -190,10 +190,10 @@ CREATE TABLE public.users (
 );
 
 
-ALTER TABLE public.users OWNER TO dev;
+ALTER TABLE public.users OWNER TO biimrpdixytdpx;
 
 --
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: dev
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: biimrpdixytdpx
 --
 
 CREATE SEQUENCE public.users_id_seq
@@ -205,45 +205,45 @@ CREATE SEQUENCE public.users_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.users_id_seq OWNER TO dev;
+ALTER TABLE public.users_id_seq OWNER TO biimrpdixytdpx;
 
 --
--- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: dev
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: biimrpdixytdpx
 --
 
 ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
--- Name: ingredients id; Type: DEFAULT; Schema: public; Owner: dev
+-- Name: ingredients id; Type: DEFAULT; Schema: public; Owner: biimrpdixytdpx
 --
 
 ALTER TABLE ONLY public.ingredients ALTER COLUMN id SET DEFAULT nextval('public.ingredients_id_seq'::regclass);
 
 
 --
--- Name: recipes id; Type: DEFAULT; Schema: public; Owner: dev
+-- Name: recipes id; Type: DEFAULT; Schema: public; Owner: biimrpdixytdpx
 --
 
 ALTER TABLE ONLY public.recipes ALTER COLUMN id SET DEFAULT nextval('public.recipes_id_seq'::regclass);
 
 
 --
--- Name: test id; Type: DEFAULT; Schema: public; Owner: dev
+-- Name: test id; Type: DEFAULT; Schema: public; Owner: biimrpdixytdpx
 --
 
 ALTER TABLE ONLY public.test ALTER COLUMN id SET DEFAULT nextval('public.test_id_seq'::regclass);
 
 
 --
--- Name: users id; Type: DEFAULT; Schema: public; Owner: dev
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: biimrpdixytdpx
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
 
 
 --
--- Name: users email_unique; Type: CONSTRAINT; Schema: public; Owner: dev
+-- Name: users email_unique; Type: CONSTRAINT; Schema: public; Owner: biimrpdixytdpx
 --
 
 ALTER TABLE ONLY public.users
@@ -251,7 +251,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: ingredients ingredients_pkey; Type: CONSTRAINT; Schema: public; Owner: dev
+-- Name: ingredients ingredients_pkey; Type: CONSTRAINT; Schema: public; Owner: biimrpdixytdpx
 --
 
 ALTER TABLE ONLY public.ingredients
@@ -259,7 +259,7 @@ ALTER TABLE ONLY public.ingredients
 
 
 --
--- Name: recipes recipes_pkey; Type: CONSTRAINT; Schema: public; Owner: dev
+-- Name: recipes recipes_pkey; Type: CONSTRAINT; Schema: public; Owner: biimrpdixytdpx
 --
 
 ALTER TABLE ONLY public.recipes
@@ -267,7 +267,7 @@ ALTER TABLE ONLY public.recipes
 
 
 --
--- Name: test test_pkey; Type: CONSTRAINT; Schema: public; Owner: dev
+-- Name: test test_pkey; Type: CONSTRAINT; Schema: public; Owner: biimrpdixytdpx
 --
 
 ALTER TABLE ONLY public.test
@@ -275,7 +275,7 @@ ALTER TABLE ONLY public.test
 
 
 --
--- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: dev
+-- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: biimrpdixytdpx
 --
 
 ALTER TABLE ONLY public.users
@@ -283,7 +283,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: dev
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: biimrpdixytdpx
 --
 
 ALTER TABLE ONLY public.users

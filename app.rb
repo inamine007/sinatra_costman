@@ -1,26 +1,30 @@
 # -----gem読み込み-----
 require 'sinatra'
-require 'sinatra/reloader' # ブラウザのリロードで変更が反映される
 require 'sinatra/json' # Ajax通信で必要
-require 'pry' # デバッグで必要
 require 'bcrypt' # 暗号化
 require 'pg' # postgresと接続
 require 'date' #日時情報を取得
+require 'dotenv'
 require './helpers/helpers.rb' # ヘルパーファイル読み込み
 
 # -----各種設定-----
 configure do
   enable :sessions
   helpers Escape
+  Dotenv.load ".env"
 end
 
 # -----DB接続設定-----
-client = PG::connect(
-  :host => ENV.fetch("HOST", "localhost"),
-  :user => ENV.fetch("USER"),
-  :password => ENV.fetch("PASSWORD"),
-  :dbname => ENV.fetch("DBNAME")
-)
+def client
+  uri = URI.parse(ENV['DATABASE_URL'])
+  @client ||= PG::connect(
+    host: uri.hostname,
+    dbname: uri.path[1..-1],
+    user: uri.user,
+    port: uri.port,
+    password: uri.password
+  )
+end
 
 # -----共通処理-----
 before do
