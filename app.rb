@@ -253,6 +253,8 @@ delete "/ingredients/:id" do
         )
       end
     end
+    # エラーがなければトランザクションを終了し、DBに反映
+    client.exec("COMMIT")
     session[:notice] = { class: "b-flash flash", message:"削除しました。"}
     return redirect "/ingredients"
   rescue
