@@ -224,11 +224,11 @@ delete "/ingredients/:id" do
   # URLから食材idを取得
   ingredient_id = params[:id]
   user_id = session[:user]['id']
-  # 食材のidとユーザーのidから対応する食材をDBから削除
-  client.exec_params("DELETE FROM ingredients WHERE id = #{ingredient_id} AND user_id = #{user_id}")
   begin
     # トランザクション開始
     client.exec("BEGIN")
+    # 食材のidとユーザーのidから対応する食材をDBから削除
+    client.exec_params("DELETE FROM ingredients WHERE id = #{ingredient_id} AND user_id = #{user_id}")
     # 紐付いているレシピからも削除
     recipe_ids = client.exec_params("SELECT id FROM ingredient_recipes WHERE ingredient_id = #{ingredient_id} AND user_id = #{user_id}").to_a
     # 紐付いているレシピが存在する場合
@@ -249,6 +249,8 @@ delete "/ingredients/:id" do
         )
       end
     end
+    # エラーがなければトランザクションを終了し、DBに反映
+    client.exec("COMMIT")
     session[:notice] = { class: "b-flash flash", message:"削除しました。"}
     return redirect "/ingredients"
   rescue
