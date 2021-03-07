@@ -72,6 +72,7 @@ end
 
 # ---新規登録ページ---
 get '/signup' do
+  # 特に処理はなし。erb返すだけ
   return erb :signup
 end
 
@@ -98,7 +99,6 @@ end
 
 # ---ログインページ---
 get "/signin" do
-  # csrf_token_generate
   return erb :signin
 end
 
@@ -226,8 +226,37 @@ delete "/ingredients/:id" do
   user_id = session[:user]['id']
   # 食材のidとユーザーのidから対応する食材をDBから削除
   client.exec_params("DELETE FROM ingredients WHERE id = #{ingredient_id} AND user_id = #{user_id}")
-  session[:notice] = { class: "b-flash flash", message:"削除しました。"}
-  return redirect "/ingredients" 
+  begin
+    # トランザクション開始
+    client.exec("BEGIN")
+    # 紐付いているレシピからも削除
+    recipe_ids = client.exec_params("SELECT id FROM ingredient_recipes WHERE ingredient_id = #{ingredient_id} AND user_id = #{user_id}").to_a
+    # 紐付いているレシピが存在する場合
+    unless recipe_ids.nil?
+      client.exec_params("DELETE FROM ingredient_recipes WHERE ingredient_id = #{ingredient_id} AND user_id = #{user_id}")
+
+      recipe_ids.each do |recipe_id|
+        r_costs = client.exec_params("SELECT cost_used FROM ingredient_recipes WHERE id = #{recipe_id['id']} AND user_id = #{user_id}").to_a
+        r_cost = 0
+        r_costs.each do |value|
+          r_cost += value['cost_used'].to_i
+        end
+        
+        client.exec_params(
+          "UPDATE recipes
+          SET cost = #{r_cost}, cost_rate = #{r_cost.to_f} / price * 100
+          WHERE id = #{recipe_id['id']} AND user_id = #{user_id}",
+        )
+      end
+    end
+    session[:notice] = { class: "b-flash flash", message:"削除しました。"}
+    return redirect "/ingredients"
+  rescue
+    # エラーがあれば処理を全てキャンセルする
+    session[:notice] = { class: "r-flash flash", message: "更新できませんでした。もう一度やり直して下さい。"}
+    client.exec("ROLLBACK")
+    return redirect "/ingredients/#{ingredient_id}"
+  end
 end
 
 # ---食材編集処理---
@@ -236,6 +265,7 @@ put "/ingredients/:id" do
     session[:notice] = { class: "r-flash flash", message:"入力を受け取れません。無効なフォームからの送信です。"}
     return redirect '/ingredients/new'
   end  
+  user_id = session[:user]['id']
   ingredient_id = params[:id]
   name = params[:name]
   trader = params[:trader]
@@ -245,16 +275,52 @@ put "/ingredients/:id" do
   unit_used = params[:unit_used]
   converted_number = params[:converted_number] 
   # 換算数、原価、歩留まりから使用単位あたりの原価を求める 
-  cost_used = converted_number.to_f * cost.to_f * (2 - budomari.to_f)  
-  # 対応する食材を更新 
-  client.exec_params(
-    "UPDATE ingredients
-    SET name = $1, trader = $2, unit = $3, cost = $4, budomari = $5, unit_used = $6, converted_number = $7, cost_used = $8
-    WHERE id = #{ingredient_id}",
-    [name, trader, unit, cost, budomari, unit_used, converted_number, cost_used]
-  )
-  session[:notice] = { class: "b-flash flash", message:"#{name}を編集しました。"}
-  return redirect "/ingredients/#{ingredient_id}"
+  cost_used = converted_number.to_f * cost.to_f * (2 - budomari.to_f)
+
+  begin
+    # トランザクション開始
+    client.exec("BEGIN")
+    # 対応する食材を更新 
+    client.exec_params(
+      "UPDATE ingredients
+      SET name = $1, trader = $2, unit = $3, cost = $4, budomari = $5, unit_used = $6, converted_number = $7, cost_used = $8
+      WHERE id = $9 AND user_id = #{user_id}",
+      [name, trader, unit, cost, budomari, unit_used, converted_number, cost_used, ingredient_id]
+    )
+
+    # 紐付いているレシピも同時に更新する
+    recipe_ids = client.exec_params("SELECT id FROM ingredient_recipes WHERE ingredient_id = #{ingredient_id} AND user_id = #{user_id}").to_a
+    # 紐付いているレシピが存在する場合
+    unless recipe_ids.nil?
+      client.exec_params(
+        "UPDATE ingredient_recipes
+        SET cost_used = amount * #{cost_used}
+        WHERE ingredient_id = #{ingredient_id} AND user_id = #{user_id}")
+
+      recipe_ids.each do |recipe_id|
+        r_costs = client.exec_params("SELECT cost_used FROM ingredient_recipes WHERE id = #{recipe_id['id']} AND user_id = #{user_id}").to_a
+        r_cost = 0
+        r_costs.each do |value|
+          r_cost += value['cost_used'].to_i
+        end
+        
+        client.exec_params(
+          "UPDATE recipes
+          SET cost = #{r_cost}, cost_rate = #{r_cost.to_f} / price * 100
+          WHERE id = #{recipe_id['id']} AND user_id = #{user_id}",
+        )
+      end
+    end
+    # エラーがなければトランザクションを終了し、DBに反映
+    client.exec("COMMIT")
+    session[:notice] = { class: "b-flash flash", message:"#{name}を編集しました。"}
+    return redirect "/ingredients/#{ingredient_id}"
+  rescue
+    # エラーがあれば処理を全てキャンセルする
+    session[:notice] = { class: "r-flash flash", message: "更新できませんでした。もう一度やり直して下さい。"}
+    client.exec("ROLLBACK")
+    return redirect "/ingredients/#{ingredient_id}"
+  end
 end
 
 # ---レシピ一覧ページ---
