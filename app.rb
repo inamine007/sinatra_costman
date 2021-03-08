@@ -535,7 +535,7 @@ put "/recipes/:id" do
   cost_rate = cost.to_f / price.to_f * 100
   
   begin
-    client.exec("BEGIN")
+    client.exec("BEGIN")    
     client.exec_params(
       "UPDATE recipes
         SET name = $1, image = $2, description = $3, price = $4, cost = $5, cost_rate = $6, user_id = $7
@@ -543,30 +543,28 @@ put "/recipes/:id" do
       [name, image, description, price, cost, cost_rate, user_id]
     )
 
+    # 食材をリセット
+    client.exec_params(
+      "DELETE FROM ingredient_recipes WHERE id = #{recipe_id}"
+    )
+
     ingredients.each do |key, value|
       ingredient_id = key['id']
       amount = key['amount']
       cost_used = key['cost']
-      meisai_id = key['meisai']
+      # meisai_idの最大値を取得
+      meisai_id = client.exec_params(
+        "SELECT max(meisai_id) as meisai_id FROM ingredient_recipes WHERE id = #{recipe_id}"
+      ).to_a.first
       
-      if meisai_id.nil? 
-        meisai_id = client.exec_params(
-          "SELECT max(meisai_id) as meisai_id FROM ingredient_recipes WHERE id = #{recipe_id}"
-        ).to_a.first
-      
-        client.exec_params(
-          "INSERT INTO ingredient_recipes (id, ingredient_id, amount, cost_used, user_id, meisai_id)
-          VALUES ($1, $2, $3, $4, $5, $6)",
-          [recipe_id, ingredient_id, amount, cost_used, user_id, meisai_id['meisai_id'].to_i + 1]
-        )
-      else
-        client.exec_params(
-          "UPDATE ingredient_recipes
-          SET ingredient_id = $1, amount = $2, cost_used = $3
-          WHERE id = $4 AND meisai_id = $5",
-          [ingredient_id, amount, cost_used, recipe_id, meisai_id]
-        )
-      end
+      # meisai_idがない場合、0に設定
+      meisai_id = {"meisai_id"=>0} if meisai_id['meisai_id'].nil?
+      # 中間テーブルにデータを保存
+      client.exec_params(
+        "INSERT INTO ingredient_recipes (id, ingredient_id, amount, cost_used, user_id, meisai_id)
+        VALUES ($1, $2, $3, $4, $5, $6)",
+        [recipe_id, ingredient_id, amount, cost_used, user_id, meisai_id['meisai_id'].to_i + 1]
+      )
     end
     client.exec("COMMIT")
     session[:notice] = { class: "b-flash flash", message:"#{name}を編集しました。"}
