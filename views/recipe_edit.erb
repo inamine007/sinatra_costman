@@ -103,7 +103,7 @@
               <input type="number" name="ingredient_cost_used_<%= i %>" id="ingredient_cost_used_<%= i %>" value="<%= h(ingredient['cost_used']) %>" style="width: 130px;" class="t_cost" readonly step="0.1">
               <span>円</span>
             </div>
-            <input type="button" value="−" class="r_btn btn btn-red" id="remove_btn_<%= i %>" style="width: 30px;">
+            <input type="button" value="−" class="r_btn btn btn-red" id="remove_btn_<%= i %>" onClick="removeInput(this.id)" style="width: 30px;">
           </div>
         </div>
       <% end %>
