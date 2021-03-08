@@ -14,7 +14,7 @@ https://docs.google.com/spreadsheets/d/1IRKC8JB2FQu8AjJxnbKWI9oK6l8EikTQ_d6DM5KS
 cssを適用していない、divタグで並べただけのブランチ。プログラム部分のみ見たい場合に使用する。
 
 # 自分のPCで動かす場合の手順
-1. 適当にフォルダを作り、そこにdevelopブランチまたはnoDesignブランチをcloneする。 `$ git clone -b https://github.com/inamine007/sinatra_costman.git .`
+1. 適当にフォルダを作り、そこにdevelopブランチまたはnoDesignブランチをcloneする。 `$ git clone -b develop https://github.com/inamine007/sinatra_costman.git .`
 2. `$ bundle install --path vendor/bundle`を実行
 3. 使用するDBを用意する。`$ psql -d postgres`→`$ CREATE DATABASE sample`
 4. sql/setup.sqlをエディタで開き、ユーザーがdevに設定されているので自分のユーザー名に全て置換する。(VSCodeでCommand + Fで検索、置換(mac))
