@@ -19,7 +19,7 @@ cssを適用していない、divタグで並べただけのブランチ。プ�
 3. 使用するDBを用意する。`$ psql -d postgres`→`$ CREATE DATABASE sample`
 4. sql/setup.sqlをエディタで開き、ユーザーがdevに設定されているので自分のユーザー名に全て置換する。(VSCodeでCommand + Fで検索、置換(mac))
 5. `$ cd sql`でsqlフォルダに移動し、`$ psql sample < setup.sql`を実行
-6. app.rbファイルがある階層に戻って`$ bundle exec ruby.rb`でsinatra起動
+6. app.rbファイルがある階層に戻って`$ bundle exec ruby app.rb`でsinatra起動
 7. できなかったらすいません、、
 
 # 未実装
